@@ -7,9 +7,6 @@
 #include "mbc1.h"
 #include "mbc3.h"
 
-#define ROM_MODE (0)
-#define RAM_MODE (1)
-
 struct mbc {
     uint8_t RAM_EN : 1;
 

@@ -63,7 +63,7 @@ uint8_t ReadRam(uint16_t address) {
 
 void WriteRam(uint16_t address, uint8_t data) {
 
-    if (!mbc.RAM_EN || mbc.ramsize == 0) {
+    if (!mbc.RAM_EN || (mbc.ramsize == 0 && mbc.timer == 0)) {
         return;
     }
 

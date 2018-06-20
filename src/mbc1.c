@@ -25,7 +25,7 @@ void MBC1_ROM_WRITE(uint16_t address, uint8_t data) {
     // Controleer of de nieuwe mode anders is.
     if (mbc.mode ^ newMode) {
 
-        if (newMode == ROM_MODE) {
+        if (newMode == MBC1_ROM_MODE) {
             mbc.romBank = (mbc.romBank & 0x1F) | (mbc.ramBank << 5);
         } else {
             mbc.romBank = (mbc.romBank & 0x1F);
