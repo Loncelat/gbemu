@@ -67,8 +67,8 @@ Gekkio's Acceptance Tests:
 |14|ei_timing|:x:|
 |15|halt_ime0_ei|:white_check_mark:|
 |16|halt_ime0_nointr_timing|:x:|
-|17|halt_ime1_timing|:x:|
-|18|halt_ime1_timing2-GS|:x:|
+|17|halt_ime1_timing|:white_check_mark:|
+|18|halt_ime1_timing2-GS|:white_check_mark:|
 |19|if_ie_registers|:white_check_mark:|
 |20|intr_timing|:white_check_mark:|
 |21|jp_cc_timing|:x:|

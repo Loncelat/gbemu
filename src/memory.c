@@ -37,8 +37,6 @@ uint8_t ReadByte(uint16_t address) {
         case 0x1:
         case 0x2:
         case 0x3:
-            return rom[address];
-
         case 0x4:
         case 0x5:
         case 0x6:
@@ -76,40 +74,6 @@ uint8_t ReadByte(uint16_t address) {
     }
 
     return 0xFF;
-
-    // O(n)
-    // if (address <= 0x3FFF) {
-    //     return rom[address];
-    // }
-    // else if (address >= 0x4000 && address <= 0x7FFF) {
-    //     return ReadRom(address);
-    // }
-    // else if (address >= 0x8000 && address <= 0x9FFF) {
-    //     return vram[address - 0x8000];
-    // }
-    // else if (address >= 0xA000 && address <= 0xBFFF) {
-    //     return ReadRam(address - 0xA000);
-    // }
-    // else if (address >= 0xC000 && address <= 0xDFFF) {
-    //     return wram[address - 0xC000];
-    // }
-    // else if (address >= 0xE000 && address <= 0xFDFF) {
-    //     return wram[address - 0xE000]; // Leest uit wram.
-    // }
-    // else if (address >= 0xFE00 && address <= 0xFE9F) {
-    //     return oam[address - 0xFE00];
-    // }
-    // else if (address >= 0xFEA0 && address <= 0xFEFF) {
-    //     return 0xFF;
-    // }
-    // else if (address >= 0xFF00 && address <= 0xFF7F) {
-    //     return ReadIO(address);
-    // }
-    // else if (address >= 0xFF80 && address <= 0xFFFF) {
-    //     return hram[address - 0xFF80];
-    // }
-
-    // return 0xFF;
 }
 
 uint16_t ReadShort(uint16_t address) {
