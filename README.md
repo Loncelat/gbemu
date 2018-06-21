@@ -44,8 +44,8 @@ Gekkio's MBC1 Tests:
 |06|rom_1MB|:white_check_mark:|
 |07|rom_2Mb|:white_check_mark:|
 |08|rom_4Mb|:white_check_mark:|
-|09|rom_8Mb|:x:|
-|10|rom_16Mb|:x:|
+|09|rom_8Mb|:white_check_mark:|
+|10|rom_16Mb|:white_check_mark:|
 
 Gekkio's Acceptance Tests:
 
