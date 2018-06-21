@@ -1,8 +1,32 @@
 #include "mbc1.h"
 
+uint8_t MBC1_ROM_READ(uint16_t address) {
+
+    uint32_t real_address;
+
+    if (address <= 0x3FFF) {
+
+        if (mbc.mode == MBC1_ROM_MODE) {
+            real_address = address;
+        } else {
+            real_address = (((mbc.ramBank << 5) & (mbc.rombanks - 1)) * 0x4000) + address;
+        }
+
+    } else {
+
+        // 8 Mbit & 16 Mbit.
+        if (mbc.rombanks >= 64) {
+            real_address = (((mbc.romBank & 0x1F) | (mbc.ramBank << 5)) & (mbc.rombanks - 1)) * 0x4000 + (address & 0x3FFF);
+        } else {
+            real_address = (mbc.romBank * 0x4000) + (address & 0x3FFF);
+        }
+    }
+
+    return rom[real_address];
+}
+
 void MBC1_ROM_WRITE(uint16_t address, uint8_t data) {
     
-    // 0x2000 - 0x3FFF
     if (address <= 0x3FFF) {
 
         uint8_t bank = (data & 0x1F);
@@ -11,29 +35,13 @@ void MBC1_ROM_WRITE(uint16_t address, uint8_t data) {
         }
         mbc.romBank = (mbc.romBank & 0x60) | bank;
         mbc.romBank &= (mbc.rombanks - 0x1);
-        return;
     }
-        
-    // 0x4000 - 0x5FFF
-    if (address <= 0x5FFF) {
+    else if (address <= 0x5FFF) {
         mbc.ramBank = data & 0x3;
-        return;
     }
-
-    uint8_t newMode = (data & 0x1);
-
-    // Controleer of de nieuwe mode anders is.
-    if (mbc.mode ^ newMode) {
-
-        if (newMode == MBC1_ROM_MODE) {
-            mbc.romBank = (mbc.romBank & 0x1F) | (mbc.ramBank << 5);
-        } else {
-            mbc.romBank = (mbc.romBank & 0x1F);
-        }
-        mbc.romBank &= (mbc.rombanks - 0x1);
+    else {
+        mbc.mode = data & 0x1;
     }
-
-    mbc.mode = newMode;
 }
 
 uint8_t MBC1_RAM_READ(uint16_t address) {

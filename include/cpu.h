@@ -10,9 +10,12 @@
 #include "timer.h"
 #include "input.h"
 #include "instructions.h"
+#include "mbc.h"
 
-#define NOT_HALTED 0
-#define HALTED 1
+#define CPU_FREQUENCY (4194304)
+
+#define NOT_HALTED (0)
+#define HALTED (1)
 
 struct cpu {
     uint8_t halted : 1;

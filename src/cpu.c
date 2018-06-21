@@ -36,6 +36,9 @@ void ResetCPU(void) {
     *gpu.ly = 0x00;
     *gpu.lyc = 0x00;
 
+    mbc.romBank = 1;
+    mbc.ramBank = 0;
+
     // Update de palettes ook meteen.
     WriteByte(0xFF47, 0xFC);
     WriteByte(0xFF48, 0xFF);

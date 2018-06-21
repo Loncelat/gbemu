@@ -10,13 +10,13 @@
 struct mbc {
     uint8_t RAM_EN : 1;
 
-    uint8_t ramBank : 2;
+    uint8_t ramBank : 5;
 
     uint8_t mode : 1;
     uint8_t battery : 1;
     uint8_t timer : 1;
 
-    uint8_t romBank;
+    uint16_t romBank;
 
     uint8_t type;
 

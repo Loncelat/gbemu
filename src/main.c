@@ -16,8 +16,14 @@ int main(int argc, char **argv) {
         return 1;
     }
 
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0) {
+        printf("SDL ging kaduuk: %s", SDL_GetError());
+        return 1;
+    }
+
     if (SetupVideo()) { gbemu_cleanup(); return 1; }
     if (LoadRom(argv)) { gbemu_cleanup(); return 1; }
+    //SetupAudio();
 
     ResetCPU();
 
@@ -32,6 +38,7 @@ int main(int argc, char **argv) {
         if (!cpu.stopped) {
             CPUCycle();
             gpuCycle(t_cycles);
+            //AudioCycle(t_cycles);
             UpdateTimer(t_cycles);
         }
         else { gbemu_cleanup(); return 0; }
