@@ -6,6 +6,7 @@
 
 #include "mbc1.h"
 #include "mbc3.h"
+#include "mbc5.h"
 
 struct mbc {
     uint8_t RAM_EN : 1;

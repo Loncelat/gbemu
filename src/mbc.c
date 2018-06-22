@@ -38,6 +38,10 @@ void WriteRom(uint16_t address, uint8_t data) {
             MBC3_ROM_WRITE(address, data);
             break;
 
+        case MBC5:
+            MBC5_ROM_WRITE(address, data);
+            break;
+
         default:
             break;
     }
@@ -58,6 +62,9 @@ uint8_t ReadRam(uint16_t address) {
         case MBC3:
             return MBC3_RAM_READ(address);
 
+        case MBC5:
+            return MBC5_RAM_READ(address);
+
         default:
             return 0xFF;
     }
@@ -77,6 +84,10 @@ void WriteRam(uint16_t address, uint8_t data) {
 
         case MBC3:
             MBC3_RAM_WRITE(address, data);
+            break;
+
+        case MBC5:
+            MBC5_RAM_WRITE(address, data);
             break;
 
         default:
