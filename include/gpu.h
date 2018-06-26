@@ -1,8 +1,5 @@
 #pragma once
 
-#define LCD_ENABLED (*gpu.control & (1 << 7))
-#define LY_LYC_INTERRUPT_ENABLED (*gpu.stat & (1 << 6))
-
 #include <stdio.h>
 #include <string.h>
 #include "SDL2/SDL.h"
@@ -16,8 +13,6 @@
 #define FRAMES_PER_SECOND 60
 #define FRAME_FREQUENCY ((double) 1000 / FRAMES_PER_SECOND)
 
-#define EMU_NAME "gbemu"
-
 #define HBLANK         0x00
 #define VBLANK         0x01
 #define SEARCH_OAM_RAM 0x02
@@ -26,6 +21,12 @@
 #define VSYNC_SHOULD_WAIT ((SDL_GetPerformanceCounter() - vsyncStartTime) * 1000.0 / SDL_GetPerformanceFrequency() < FRAME_FREQUENCY)
 #define VSYNC_WAIT (SDL_Delay((FRAME_FREQUENCY) - (SDL_GetPerformanceCounter() - vsyncStartTime) * 1000.0 / SDL_GetPerformanceFrequency()))
 
+#define COINCIDENCE_IRQ (*gpu.stat & (1 << 6))
+#define OAM_CHECK_IRQ   (*gpu.stat & (1 << 5))
+#define VBLANK_IRQ      (*gpu.stat & (1 << 4))
+#define HBLANK_IRQ      (*gpu.stat & (1 << 3))
+
+#define LCD_ENABLED         (*gpu.control & (1 << 7))
 #define WD_TILEMAP          (*gpu.control & (1 << 6))
 #define TILE_ADDR_MODE      (*gpu.control & (1 << 4))
 #define WINDOW_ENABLED      (*gpu.control & (1 << 5))

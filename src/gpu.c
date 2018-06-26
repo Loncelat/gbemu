@@ -15,7 +15,7 @@ uint8_t Window_Scale = LCD_DEFAULT_SIZE;
 SDL_Event event;
 
 uint64_t vsyncStartTime;
-uint8_t waitForVSync = 1;
+uint8_t waitForVsync = 1;
 uint8_t skipNextFrame = 0;
 
 // LCD van 160px bij 144px.
@@ -98,24 +98,22 @@ void gpuCycle(uint8_t cycles) {
 
 	if (gpu.cycles > 456)
 	{
-		switch(*gpu.ly)
-		{
-            // GNU Case Range. Geen standaard C.
-			case 0 ... 143: 
-                if (!skipNextFrame) {
-                    PushScanLine(); 
-                } break;
 
-			case 144:
-				DrawPixelBuffer();
-                REQ_INTERRUPT(VBL_INTERRUPT);
-			    break;
+        if (*gpu.ly <= 143 && !skipNextFrame) {
+            PushScanLine();
+        }
 
-			case 153: *gpu.ly = 0xFF; break;
-		}
+        if (*gpu.ly == 143) {
+            DrawPixelBuffer();
+            REQ_INTERRUPT(VBL_INTERRUPT);
+        } 
+        else if (*gpu.ly == 153) {
+            *gpu.ly = 0xFF;
+        }
 
 		*gpu.ly += 1;
 
+        UpdategpuMode();
         Compare_LY_LYC();
 
 		gpu.cycles -= 456;
@@ -158,10 +156,10 @@ void UpdategpuMode(void) {
 
         }
 
-        if (requestInterrupt && gpu.mode != previousMode) {
-            REQ_INTERRUPT(STAT_INTERRUPT);
-        }
+    }
 
+    if (requestInterrupt && gpu.mode != previousMode) {
+        REQ_INTERRUPT(STAT_INTERRUPT);
     }
 
 }
@@ -170,7 +168,7 @@ void Compare_LY_LYC(void) {
 
     gpu.ly_equals_lyc = (*gpu.ly == *gpu.lyc);
 
-    if (gpu.ly_equals_lyc && LY_LYC_INTERRUPT_ENABLED) {
+    if (gpu.ly_equals_lyc && COINCIDENCE_IRQ) {
         REQ_INTERRUPT(STAT_INTERRUPT);
     }
 
@@ -336,7 +334,7 @@ void DrawPixelBuffer(void) {
 
     skipNextFrame = 0;
 
-    if (waitForVSync) {
+    if (waitForVsync) {
 
         if (VSYNC_SHOULD_WAIT) {
             VSYNC_WAIT;
