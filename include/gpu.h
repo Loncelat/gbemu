@@ -47,7 +47,7 @@ extern SDL_Texture *LCD;
 extern uint8_t Window_Scale;
 
 extern uint64_t vsyncStartTime;
-extern uint8_t waitForVSync;
+extern uint8_t waitForVsync;
 
 typedef struct {
     uint8_t r, g, b;

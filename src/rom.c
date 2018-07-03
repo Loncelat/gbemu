@@ -52,7 +52,7 @@ uint8_t LoadRom(char **argv) {
     }
 
     if (fileLength < mbc.rombanks * 0x4000) {
-        printf("ROM file is too smal!");
+        printf("ROM file is too small!");
         fclose(f);
         return 1;
     }
@@ -189,13 +189,18 @@ void InitMBCType(uint8_t cartridgeType, char *romname, char **argv) {
         fseek(mbc.save, 0, SEEK_END);
         size_t fileLength = ftell(mbc.save);
 
+        // Change the size of the file to match the RAM size.
         if (fileLength < mbc.ramsize) {
             fseek(mbc.save, mbc.ramsize - 1, SEEK_SET);
             fputc('\0', mbc.save);
         }
 
         rewind(mbc.save);
-        fread(sram, 1, mbc.ramsize, mbc.save);
+        if (!fread(sram, 1, mbc.ramsize, mbc.save)) {
+            printf("Failed to open save file.");
+            fclose(mbc.save);
+            return;
+        }
     }
 
     // TODO: RTC enz.

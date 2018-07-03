@@ -30,7 +30,7 @@ void ResetCPU(void) {
     *gpu.control = 0x91;
     *gpu.stat = 0x80;
     gpu.ly_equals_lyc = 0x1;
-    gpu.mode = 0x01;
+    gpu.mode = SEARCH_OAM_RAM;
     *gpu.scy = 0x00;
     *gpu.scx = 0x00;
     *gpu.ly = 0x00;

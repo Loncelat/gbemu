@@ -7,7 +7,10 @@
 #include "memory.h"
 #include "cpu.h"
 #include "gpu.h"
+#include "apu.h"
 #include "input.h"
 #include "timer.h"
+
+#define EMU_NAME "gbemu"
 
 uint8_t ShutdownRequested;

@@ -137,23 +137,17 @@ void UpdategpuMode(void) {
         gpu.mode = VBLANK;
         requestInterrupt = *gpu.stat & (1 << 4);
     } else {
-        
-        switch (gpu.cycles) {
-            
-            case 376 ... 456: 
-                gpu.mode = SEARCH_OAM_RAM;
-                requestInterrupt = *gpu.stat & (1 << 5);
-                break;
-            
-            case 204 ... 375:
-                gpu.mode = DATA_TO_LCD;
-                break;
-            
-            default:
-                gpu.mode = HBLANK;
-                requestInterrupt = *gpu.stat & (1 << 3);
-                break;
 
+        if (gpu.cycles < 204) {
+            gpu.mode = HBLANK;
+            requestInterrupt = *gpu.stat & (1 << 3);
+        }
+        else if (gpu.cycles < 376) {
+            gpu.mode = DATA_TO_LCD;
+        }
+        else {
+            gpu.mode = SEARCH_OAM_RAM;
+            requestInterrupt = *gpu.stat & (1 << 5);
         }
 
     }
