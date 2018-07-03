@@ -2,9 +2,10 @@
 
 void RenderTiles(void);
 void RenderSprites(void);
-void UpdategpuMode(void);
 void PushScanLine(void);
 void DrawPixelBuffer(void);
+
+inline void UpdategpuMode(void);
 
 SDL_Window *window = NULL;
 SDL_Renderer *LCDRenderer = NULL;
@@ -120,7 +121,7 @@ void gpuCycle(uint8_t cycles) {
 	}
 }
 
-void UpdategpuMode(void) {
+inline void UpdategpuMode(void) {
 
     if (!LCD_ENABLED) {
         gpu.mode = HBLANK;
@@ -149,6 +150,23 @@ void UpdategpuMode(void) {
             gpu.mode = SEARCH_OAM_RAM;
             requestInterrupt = *gpu.stat & (1 << 5);
         }
+        
+        // switch (gpu.cycles) {
+            
+        //     case 376 ... 456: 
+
+        //         break;
+            
+        //     case 204 ... 375:
+        //         gpu.mode = DATA_TO_LCD;
+        //         break;
+            
+        //     default:
+        //         gpu.mode = HBLANK;
+        //         requestInterrupt = *gpu.stat & (1 << 3);
+        //         break;
+
+        // }
 
     }
 
