@@ -5,7 +5,7 @@ void RenderSprites(void);
 void PushScanLine(void);
 void DrawPixelBuffer(void);
 
-inline void UpdategpuMode(void);
+static inline void UpdategpuMode(void);
 
 SDL_Window *window = NULL;
 SDL_Renderer *LCDRenderer = NULL;
@@ -24,7 +24,7 @@ Colour_t pixelBuffer[144][160];
 uint8_t scanLineRow[160];
 
 // Grijstinten-palette.
-const Colour_t paletteShades[4] = {
+const Colour_t palette[4] = {
     {232, 232, 232},
     {160, 160, 160},
     {88,  88,  88},
@@ -97,7 +97,7 @@ void gpuCycle(uint8_t cycles) {
 
 	gpu.cycles += cycles;
 
-	if (gpu.cycles > 456)
+	if (gpu.cycles >= 456)
 	{
 
         if (*gpu.ly <= 143 && !skipNextFrame) {
@@ -121,7 +121,7 @@ void gpuCycle(uint8_t cycles) {
 	}
 }
 
-inline void UpdategpuMode(void) {
+static inline void UpdategpuMode(void) {
 
     if (!LCD_ENABLED) {
         gpu.mode = HBLANK;
@@ -139,34 +139,29 @@ inline void UpdategpuMode(void) {
         requestInterrupt = *gpu.stat & (1 << 4);
     } else {
 
-        if (gpu.cycles < 204) {
-            gpu.mode = HBLANK;
-            requestInterrupt = *gpu.stat & (1 << 3);
-        }
-        else if (gpu.cycles < 376) {
-            gpu.mode = DATA_TO_LCD;
-        }
-        else {
+        // if (gpu.cycles < 204) {
+        //     gpu.mode = HBLANK;
+        //     requestInterrupt = *gpu.stat & (1 << 3);
+        // }
+        // else if (gpu.cycles < 376) {
+        //     gpu.mode = SEARCH_OAM_RAM;
+        //     requestInterrupt = *gpu.stat & (1 << 5);
+        // }
+        // else {
+        //     gpu.mode = DATA_TO_LCD;
+        // }
+        
+        if (gpu.cycles < 80) {
             gpu.mode = SEARCH_OAM_RAM;
             requestInterrupt = *gpu.stat & (1 << 5);
         }
-        
-        // switch (gpu.cycles) {
-            
-        //     case 376 ... 456: 
-
-        //         break;
-            
-        //     case 204 ... 375:
-        //         gpu.mode = DATA_TO_LCD;
-        //         break;
-            
-        //     default:
-        //         gpu.mode = HBLANK;
-        //         requestInterrupt = *gpu.stat & (1 << 3);
-        //         break;
-
-        // }
+        else if (gpu.cycles < 252) {
+            gpu.mode = DATA_TO_LCD;
+        }
+        else {
+            gpu.mode = HBLANK;
+            requestInterrupt = *gpu.stat & (1 << 3);
+        }
 
     }
 
@@ -188,7 +183,7 @@ void Compare_LY_LYC(void) {
 
 void PushScanLine(void) {
 
-    memset(scanLineRow, 0, sizeof(scanLineRow));
+    //memset(scanLineRow, 0, sizeof(scanLineRow));
 
     RenderTiles();
 
@@ -230,7 +225,8 @@ void RenderTiles(void) {
 
         uint8_t xPos = i + *gpu.scx;
 
-        if (usingWindow && i >= *gpu.wx - 7) {
+        // Possible underflow when *gpu.wx < 7.
+        if (usingWindow && i >= (*gpu.wx - 7)) {
             xPos = i - (*gpu.wx - 7);
         }
 
@@ -248,7 +244,7 @@ void RenderTiles(void) {
         uint8_t mask, colourID;
         uint8_t tilePos = xPos % 8;
 
-        // Teken de rest van de tile ook.
+        // Use the same data to draw the rest of the tile's row.
         do {
             mask = 1 << (7 - tilePos);
 
@@ -256,7 +252,7 @@ void RenderTiles(void) {
                         ((data1 & mask) >> (7 - tilePos));
 
             scanLineRow[i] = colourID;
-            pixelBuffer[*gpu.ly][i] = paletteShades[gpu.bgPalette[colourID]];
+            pixelBuffer[*gpu.ly][i] = palette[gpu.bgPalette[colourID]];
             ++i;
             ++tilePos;
 
@@ -287,7 +283,10 @@ void RenderSprites(void) {
         uint8_t palNo = SPRITE_PALETTE >> 4;
         uint8_t priority = SPRITE_PRIORITY;
 
-        // Bit 0 wordt genegeerd bij 8x16.
+        /*
+        When using 8x16 sprites, the least significant bit of
+        the sprite's tile number is ignored.
+        */
         if (use8x16) {
             sprite.tile &= 0xFE;
         }
@@ -325,7 +324,7 @@ void RenderSprites(void) {
                                ((data2 & mask) ? 2 : 0);
 
             if (colourID) {
-                pixelBuffer[*gpu.ly][x] = paletteShades[
+                pixelBuffer[*gpu.ly][x] = palette[
                     gpu.obpPalette[palNo][colourID - 1]
                 ];
             }

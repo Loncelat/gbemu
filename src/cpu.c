@@ -28,9 +28,9 @@ void ResetCPU(void) {
     timer.frequency = 0;
 
     *gpu.control = 0x91;
-    *gpu.stat = 0x80;
+    *gpu.stat = 0x85;
     gpu.ly_equals_lyc = 0x1;
-    gpu.mode = SEARCH_OAM_RAM;
+    gpu.mode = VBLANK;
     *gpu.scy = 0x00;
     *gpu.scx = 0x00;
     *gpu.ly = 0x00;
@@ -68,10 +68,12 @@ void PrintRegisters(void) {
     printf("STAT: %02X\n", ReadByte(0xFF41));
     printf("DIV: %02X\n", timer.div);
     printf("LY: %02X\n", *gpu.ly);
-    printf("TIMA: %02X\n", *timer.tima);
-    printf("TMA: %02X\n", *timer.tma);
-    printf("TAC: %02X\n", ReadByte(0xFF07));
-    printf("ROM: %02X\n\n", mbc.romBank);
+    printf("CYCLES: %03i\n", gpu.cycles);
+    printf("MODE: %02X\n", gpu.mode);
+    // printf("TIMA: %02X\n", *timer.tima);
+    // printf("TMA: %02X\n", *timer.tma);
+    // printf("TAC: %02X\n", ReadByte(0xFF07));
+    // printf("ROM: %02X\n\n", mbc.romBank);
 }
 
 void CPUCycle(void) {

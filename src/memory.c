@@ -17,21 +17,15 @@ static inline uint8_t ReadIO(uint16_t address);
 static inline void WriteIO(uint16_t address, uint8_t data);
 
 // DMA of zo.
-void copy(uint16_t address, uint16_t origin, uint16_t size) {
-    for (uint16_t i = 0; i < size; ++i) {
-        WriteByte(address + i, ReadByte(origin + i));
+void dma(uint16_t origin) {
+    for (uint16_t i = 0; i < 160; ++i) {
+        oam[i] = ReadByte(origin + i);
+        //gpuCycle(4);
     }
 }
 
-/* 
-    GCC maakt hier een linaire search van.
-    Hierdoor is de tijd ongeveer recht evenredig met address: O(n)
-    Een switch-variant wordt met binary search gedaan, waardoor
-    er ongeveer O(1) instructies zijn.
-*/
 uint8_t ReadByte(uint16_t address) {
 
-    // O(1)
     switch (address >> 12) {
         case 0x0:
         case 0x1:
@@ -45,7 +39,9 @@ uint8_t ReadByte(uint16_t address) {
         
         case 0x8:
         case 0x9:
-            return vram[address - 0x8000];
+            if (gpu.mode != DATA_TO_LCD) {
+                return vram[address - 0x8000];
+            }
 
         case 0xA:
         case 0xB:
@@ -60,7 +56,9 @@ uint8_t ReadByte(uint16_t address) {
                 return wram[address - 0xE000]; // Leest uit wram.
             }
             else if (address <= 0xFE9F) {
-                return oam[address - 0xFE00];
+                if (gpu.mode == HBLANK || gpu.mode == VBLANK) {
+                    return oam[address - 0xFE00];
+                }
             }
             else if (address <= 0xFEFF) {
                 return 0xFF;
@@ -92,7 +90,9 @@ void WriteByte(uint16_t address, uint8_t data) {
         WriteRom(address, data);
     }    
     else if (address >= 0x8000 && address <= 0x9FFF) {
-        vram[address - 0x8000] = data;
+        if (gpu.mode != DATA_TO_LCD || !LCD_ENABLED) {
+            vram[address - 0x8000] = data;
+        }
     }
     else if (address >= 0xA000 && address <= 0xBFFF) {
         WriteRam(address - 0xA000, data);
@@ -104,7 +104,9 @@ void WriteByte(uint16_t address, uint8_t data) {
         wram[address - 0xE000] = data; // Hoera voor echo RAM
     }
     else if (address >= 0xFE00 && address <= 0xFE9F) {
-        oam[address - 0xFE00] = data;
+        if (gpu.mode == HBLANK || gpu.mode == VBLANK || !LCD_ENABLED) {
+            oam[address - 0xFE00] = data;
+        }
     }
     else if (address >= 0xFF00 && address <= 0xFF7F) {
         WriteIO(address, data);
@@ -126,7 +128,7 @@ void WriteStack(uint16_t data) {
 
 inline uint8_t ReadIO(uint16_t address) {
     switch(address - 0xFF00) {
-        case 0x00:; // Deze ; hoort hier.
+        case 0x00:;
             uint8_t JoyPad_Register = io[0x00];
             if (JoyPad_Register & (1 << 4)) { // RLUD
                 JoyPad_Register &= 0xFF & ((keys.Start << 3) | (keys.Select << 2) | (keys.B << 1) | (keys.A << 0));
@@ -138,7 +140,8 @@ inline uint8_t ReadIO(uint16_t address) {
             
         case 0x03: return timer.div & 0x00FF;
         case 0x04: return (timer.div & 0xFF00) >> 8;
-        case 0x41: return (*gpu.stat | 0x80) | (gpu.ly_equals_lyc << 2) | (gpu.mode);
+        case 0x07: return 0xF8 | (timer.enabled << 2) | timer.frequency;
+        case 0x41: return ((*gpu.stat | 0x80) & 0xF8) | (gpu.ly_equals_lyc << 2) | (gpu.mode);
         default: return io[address - 0xFF00];
     }
 }
@@ -163,7 +166,7 @@ inline void WriteIO(uint16_t address, uint8_t data) {
 
         case 0x46: 
             *gpu.dma = data;
-            copy(0xFE00, data << 8, 160);
+            dma(data << 8);
             break;
         case 0x47: 
             *gpu.bgp = data;

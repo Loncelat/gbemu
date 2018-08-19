@@ -216,7 +216,7 @@ uint8_t ExecuteInstruction(uint8_t opcode) {
             if (bit_zero) { SET_FLAGS(C_FLAG); registers.a |= (1 << 7); }
             
             break;
-        case 0x10: cpu.stopped = 1; PrintRegisters(); getchar(); break;
+        case 0x10: cpu.halted = HALTED; registers.pc += 1; break;
         case 0x11: LD_RR_NN(registers.de); break;
         case 0x12: WriteByte(registers.de, registers.a); break;
         case 0x13: registers.de++; break;
