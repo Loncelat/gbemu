@@ -1,6 +1,6 @@
 # gbemu
 
-gbemu (name subject to change) is a very work-in-progress emulator for the Nintento Game Boy.
+gbemu (name subject to change) is a very work-in-progress emulator for the Nintendo Game Boy.
 
 #### Test status:
 
