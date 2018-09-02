@@ -138,6 +138,7 @@ void InitMBCType(uint8_t cartridgeType, char *romname, char **argv) {
     if (mbc.battery) {
         #if defined(_WIN32)
 
+        char savDir[_MAX_DRIVE + _MAX_DIR + _MAX_FNAME + sizeof(SAVE_EXT)];
         char sav[_MAX_DRIVE + _MAX_DIR + _MAX_FNAME + sizeof(SAVE_EXT)];
 
         char fulldir[_MAX_DRIVE + _MAX_DIR + _MAX_FNAME + _MAX_EXT];
@@ -148,16 +149,16 @@ void InitMBCType(uint8_t cartridgeType, char *romname, char **argv) {
 
         _splitpath(fulldir, drv, dir, NULL, NULL);
 
-        snprintf(sav, sizeof(sav), "%s%s%s", drv, dir, SAVE_FOLDER);
+        snprintf(savDir, sizeof(sav), "%s%s%s", drv, dir, SAVE_FOLDER);
         CreateDirectory(sav, NULL);
 
         // Fallback als er geen romname in de header staat.
         if (strlen(romname) > 0) {
-            snprintf(sav, sizeof(sav), "%s%s%s", sav, romname, SAVE_EXT);
+            snprintf(sav, sizeof(sav), "%s%s%s", savDir, romname, SAVE_EXT);
         } else {
             char fname[_MAX_FNAME];
             _splitpath(argv[1], NULL, NULL, fname, NULL);
-            snprintf(sav, sizeof(sav), "%s%s%s%s", sav, FB_PREFIX, fname, SAVE_EXT);
+            snprintf(sav, sizeof(sav), "%s%s%s%s", savDir, FB_PREFIX, fname, SAVE_EXT);
         }
 
         #elif defined(__linux__)
