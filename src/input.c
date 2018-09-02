@@ -6,7 +6,7 @@ void HandleInput(SDL_Event *event) {
     if (event->type == SDL_KEYDOWN) {
 
         switch(event->key.keysym.sym) {
-            case SDLK_d:      keys.A      = 0; break;
+            case SDLK_s:      keys.A      = 0; break;
             case SDLK_a:      keys.B      = 0; break;
             case SDLK_LSHIFT: keys.Select = 0; break;
             case SDLK_SPACE:  keys.Start  = 0; break;
@@ -27,7 +27,7 @@ void HandleInput(SDL_Event *event) {
     else if (event->type == SDL_KEYUP) {
 
         switch(event->key.keysym.sym) {
-            case SDLK_d:      keys.A      = 1; break;
+            case SDLK_s:      keys.A      = 1; break;
             case SDLK_a:      keys.B      = 1; break;
             case SDLK_LSHIFT: keys.Select = 1; break;
             case SDLK_SPACE:  keys.Start  = 1; break;
