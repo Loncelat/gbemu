@@ -61,16 +61,16 @@ Gekkio's Acceptance Tests:
 |08|call_cc_timing2|:x:|
 |09|call timing|:x:|
 |10|call_timing 2|:x:|
-|11|di_timing-GS|:x:|
+|11|di_timing-GS|:white_check_mark:|
 |12|div timing|:white_check_mark:|
-|13|ei_sequence|:x:|
-|14|ei_timing|:x:|
+|13|ei_sequence|:white_check_mark:|
+|14|ei_timing|:white_check_mark:|
 |15|halt_ime0_ei|:white_check_mark:|
 |16|halt_ime0_nointr_timing|:x:|
 |17|halt_ime1_timing|:white_check_mark:|
 |18|halt_ime1_timing2-GS|:white_check_mark:|
 |19|if_ie_registers|:white_check_mark:|
-|20|intr_timing|:white_check_mark:|
+|20|intr_timing|:x:|
 |21|jp_cc_timing|:x:|
 |22|jp timing|:x:|
 |23|ld hl_sp_e timing|:x:|
@@ -79,7 +79,7 @@ Gekkio's Acceptance Tests:
 |26|oam_dma_timing|:x:|
 |27|pop_timing|:x:|
 |28|push_timing|:x:|
-|29|rapid_di_ei|:x:|
+|29|rapid_di_ei|:white_check_mark:|
 |30|ret_cc_timing|:x:|
 |31|ret_timing|:x:|
 |32|reti_intr_timing|:x:|
