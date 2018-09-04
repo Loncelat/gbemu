@@ -89,33 +89,52 @@ uint16_t ReadStack(void) {
 
 void WriteByte(uint16_t address, uint8_t data) {
 
-    if (address <= 0x7FFF) {
-        WriteRom(address, data);
-    }    
-    else if (address >= 0x8000 && address <= 0x9FFF) {
-        if (gpu.mode != DATA_TO_LCD || !LCD_ENABLED) {
-            vram[address - 0x8000] = data;
-        }
-    }
-    else if (address >= 0xA000 && address <= 0xBFFF) {
-        WriteRam(address - 0xA000, data);
-    }
-    else if (address >= 0xC000 && address <= 0xDFFF) {
-        wram[address - 0xC000] = data;
-    }
-    else if (address >= 0xE000 && address <= 0xFDFF) {
-        wram[address - 0xE000] = data; // Hoera voor echo RAM
-    }
-    else if (address >= 0xFE00 && address <= 0xFE9F) {
-        if (gpu.mode == HBLANK || gpu.mode == VBLANK || !LCD_ENABLED) {
-            oam[address - 0xFE00] = data;
-        }
-    }
-    else if (address >= 0xFF00 && address <= 0xFF7F) {
-        WriteIO(address, data);
-    }
-    else if (address >= 0xFF80) {
-        hram[address - 0xFF80] = data;
+    switch (address >> 12) {
+        case 0x0:
+        case 0x1:
+        case 0x2:
+        case 0x3:
+        case 0x4:
+        case 0x5:
+        case 0x6:
+        case 0x7:
+            WriteRom(address, data); 
+            break;
+        
+        case 0x8:
+        case 0x9:
+            if (gpu.mode != DATA_TO_LCD || !LCD_ENABLED) {
+                vram[address - 0x8000] = data;
+            } 
+            break;
+
+        case 0xA:
+        case 0xB:
+            WriteRam(address - 0xA000, data);
+            break;
+        
+        case 0xC:
+        case 0xD:
+            wram[address - 0xC000] = data;
+            break;
+
+        default:
+            if (address <= 0xFDFF) {
+                wram[address - 0xE000] = data;
+            }
+            else if (address <= 0xFE9F) {
+                if (gpu.mode == HBLANK || gpu.mode == VBLANK) {
+                    oam[address - 0xFE00] = data;
+                }
+            }
+            else if (address <= 0xFEFF) {
+            }
+            else if (address <= 0xFF7F) {
+                WriteIO(address, data);
+            }
+            else {
+                hram[address - 0xFF80] = data;
+            }
     }
 }
 
