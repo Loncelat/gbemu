@@ -131,12 +131,12 @@ inline uint8_t ReadIO(uint16_t address) {
         case 0x00:;
             uint8_t JoyPad_Register = io[0x00];
             if (JoyPad_Register & (1 << 4)) { // RLUD
-                JoyPad_Register &= 0xFF & ((keys.Start << 3) | (keys.Select << 2) | (keys.B << 1) | (keys.A << 0));
+                JoyPad_Register &= (keys.Start << 3) | (keys.Select << 2) | (keys.B << 1) | (keys.A << 0);
             }
             if (JoyPad_Register & (1 << 5)) {
-                JoyPad_Register &= 0xFF & ((keys.Down << 3) | (keys.Up << 2) | (keys.Left << 1) | (keys.Right << 0));
+                JoyPad_Register &= (keys.Down << 3) | (keys.Up << 2) | (keys.Left << 1) | (keys.Right << 0);
             }
-            return JoyPad_Register;
+            return JoyPad_Register | 0xC0;
             
         case 0x03: return timer.div & 0x00FF;
         case 0x04: return (timer.div & 0xFF00) >> 8;
