@@ -9,6 +9,7 @@
 #include "timer.h"
 #include "input.h"
 #include "gpu.h"
+#include "io.h"
 
 extern uint8_t *rom; // 0000-7FFF ROM | cartridge data
 extern uint8_t vram[0x2000]; // 8000-9FFF Video RAM
@@ -19,7 +20,7 @@ extern uint8_t io[0x0080];   // FF00-FF7F MMIO
 extern uint8_t hram[0x0080]; // FF80-FFFF Zero-page RAM | high RAM
 
 void PrintRom(void);
-void copy(uint16_t address, uint16_t origin, uint16_t size);
+void dma(uint16_t origin);
 
 uint8_t ReadByte(uint16_t address);
 uint16_t ReadShort(uint16_t address);
