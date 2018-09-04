@@ -5,6 +5,7 @@
 #include "SDL2/SDL.h"
 #include "memory.h"
 #include "main.h"
+#include "io.h"
 
 #define LCD_WIDTH 160
 #define LCD_HEIGHT 144

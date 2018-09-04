@@ -32,9 +32,9 @@ const Colour_t palette[4] = {
 };
 
 struct gpu gpu = { 
-    &io[0x40], &io[0x41], &io[0x42], &io[0x43],
-    &io[0x44], &io[0x45], &io[0x46], &io[0x47], 
-    &io[0x48], &io[0x49], &io[0x4A], &io[0x4B], 
+    &io[IO_LCDC], &io[IO_STAT], &io[IO_SCY], &io[IO_SCX],
+    &io[IO_LY], &io[IO_LYC], &io[IO_DMA], &io[IO_BGP], 
+    &io[IO_OBP0], &io[IO_OBP1], &io[IO_WY], &io[IO_WX], 
     0, 0, 0, 
     {0, 0, 0, 0}, { {3, 3, 3}, {3, 3, 3} }
 };
