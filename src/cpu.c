@@ -81,11 +81,12 @@ void CPUCycle(void) {
     register uint8_t opcode;
     t_cycles = 0;
     
-    if (enableIMENextClock) { IME = 1; enableIMENextClock = 0; }
     if (CheckAndHandleInterrupts()) {
         t_cycles += (cpu.halted ? 24 : 20);
         return;
     }
+
+    if (enableIMENextClock) { IME = 1; enableIMENextClock = 0; }
 
     if (cpu.halted) {
         t_cycles += 4;
