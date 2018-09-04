@@ -18,6 +18,11 @@ static inline void WriteIO(uint16_t address, uint8_t data);
 
 // DMA of zo.
 void dma(uint16_t origin) {
+
+    if (origin >= 0xE000) {
+        origin -= 0x2000;
+    }
+
     for (uint16_t i = 0; i < 160; ++i) {
         oam[i] = ReadByte(origin + i);
         //gpuCycle(4);
