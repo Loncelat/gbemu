@@ -54,7 +54,7 @@ typedef struct {
     uint8_t r, g, b;
 } Colour_t;
 
-struct gpu {
+extern struct gpu {
     uint8_t * const control;
     uint8_t * const stat;
 
@@ -85,7 +85,7 @@ struct gpu {
 
     uint8_t bgPalette[4];
     uint8_t obpPalette[2][3];
-} extern gpu;
+} gpu;
 
 typedef struct {
     uint8_t y;

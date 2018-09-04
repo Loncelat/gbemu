@@ -44,6 +44,7 @@ uint8_t ReadByte(uint16_t address) {
             if (gpu.mode != DATA_TO_LCD) {
                 return vram[address - 0x8000];
             }
+            break;
 
         case 0xA:
         case 0xB:
@@ -113,7 +114,7 @@ void WriteByte(uint16_t address, uint8_t data) {
     else if (address >= 0xFF00 && address <= 0xFF7F) {
         WriteIO(address, data);
     }
-    else if (address >= 0xFF80 && address <= 0xFFFF) {
+    else if (address >= 0xFF80) {
         hram[address - 0xFF80] = data;
     }
 }

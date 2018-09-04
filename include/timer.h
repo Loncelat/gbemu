@@ -4,7 +4,7 @@
 #include "memory.h"
 #include "interrupts.h"
 
-struct timer {
+extern struct timer {
     // Divider Register.
     uint16_t div;
 
@@ -16,7 +16,7 @@ struct timer {
 
     uint8_t enabled;
     uint8_t frequency;
-} extern timer;
+} timer;
 
 void WriteTimerControl(uint8_t data);
 void UpdateTimer(uint8_t cycles);

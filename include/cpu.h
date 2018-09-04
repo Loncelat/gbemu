@@ -17,11 +17,11 @@
 #define NOT_HALTED (0)
 #define HALTED (1)
 
-struct cpu {
+extern struct cpu {
     uint8_t halted : 1;
     uint8_t bugged : 1;
     uint8_t stopped : 1;
-} extern cpu;
+} cpu;
 
 extern uint8_t enableIMENextClock, t_cycles;
 

@@ -19,7 +19,7 @@
 #include <stdint.h>
 
 // Hoera voor little endian
-struct registers {
+extern struct registers {
 	struct {
 		union {
 			struct {
@@ -62,4 +62,4 @@ struct registers {
 	
 	uint16_t pc; // Program counter
 	uint16_t sp; // Stack pointer
-} extern registers;
+} registers;

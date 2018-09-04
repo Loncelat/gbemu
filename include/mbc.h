@@ -8,7 +8,7 @@
 #include "mbc3.h"
 #include "mbc5.h"
 
-struct mbc {
+extern struct mbc {
     uint8_t RAM_EN : 1;
 
     uint8_t ramBank : 5;
@@ -26,7 +26,7 @@ struct mbc {
     uint32_t ramsize;
 
     FILE *save;
-} extern mbc;
+} mbc;
 
 enum {
     ROM =  0,
