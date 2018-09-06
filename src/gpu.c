@@ -138,18 +138,6 @@ static inline void UpdategpuMode(void) {
         gpu.mode = VBLANK;
         requestInterrupt = *gpu.stat & (1 << 4);
     } else {
-
-        // if (gpu.cycles < 204) {
-        //     gpu.mode = HBLANK;
-        //     requestInterrupt = *gpu.stat & (1 << 3);
-        // }
-        // else if (gpu.cycles < 376) {
-        //     gpu.mode = SEARCH_OAM_RAM;
-        //     requestInterrupt = *gpu.stat & (1 << 5);
-        // }
-        // else {
-        //     gpu.mode = DATA_TO_LCD;
-        // }
         
         if (gpu.cycles < 80) {
             gpu.mode = SEARCH_OAM_RAM;
@@ -182,8 +170,6 @@ void Compare_LY_LYC(void) {
 }
 
 void PushScanLine(void) {
-
-    //memset(scanLineRow, 0, sizeof(scanLineRow));
 
     RenderTiles();
 
