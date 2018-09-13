@@ -19,35 +19,18 @@ void ResetCPU(void) {
     cpu.bugged = 0;
     cpu.stopped = 0;
 
-    memset(io, 0xFF, sizeof(io));
+    ResetIO();
     
     timer.div = 0xABCC;
-    *timer.tima = 0x00;
-    *timer.tma = 0x00;
     timer.enabled = 0;
     timer.frequency = 0;
 
-    *gpu.control = 0x91;
-    *gpu.stat = 0x85;
     gpu.ly_equals_lyc = 0x1;
     gpu.mode = VBLANK;
-    *gpu.scy = 0x00;
-    *gpu.scx = 0x00;
-    *gpu.ly = 0x00;
-    *gpu.lyc = 0x00;
+    gpu.cycles = 160;
 
     mbc.romBank = 1;
     mbc.ramBank = 0;
-
-    // Update de palettes ook meteen.
-    WriteByte(0xFF47, 0xFC);
-    WriteByte(0xFF48, 0xFF);
-    WriteByte(0xFF49, 0xFF);
-
-    *gpu.wy = 0x00;
-    *gpu.wx = 0x00;
-
-    gpu.cycles = 160;
 
     keys.A = keys.B = keys.Select = keys.Start = 1;
     keys.Up = keys.Down = keys.Left = keys.Right = 1;
@@ -104,4 +87,3 @@ void CPUCycle(void) {
     t_cycles += ExecuteInstruction(opcode);
 
 }
-

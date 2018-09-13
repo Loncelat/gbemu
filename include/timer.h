@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include "memory.h"
 #include "interrupts.h"
+#include "io.h"
 
 extern struct timer {
     // Divider Register.

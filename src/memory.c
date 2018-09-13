@@ -67,7 +67,7 @@ uint8_t ReadByte(uint16_t address) {
                 return 0xFF;
             }
             else if (address <= 0xFF7F) {
-                return ReadIO(address);
+                return ReadIO(address - 0xFF00);
             }
             else {
                 return hram[address - 0xFF80];
@@ -130,7 +130,7 @@ void WriteByte(uint16_t address, uint8_t data) {
             else if (address <= 0xFEFF) {
             }
             else if (address <= 0xFF7F) {
-                WriteIO(address, data);
+                WriteIO(address - 0xFF00, data);
             }
             else {
                 hram[address - 0xFF80] = data;

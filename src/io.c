@@ -1,10 +1,10 @@
 #include "io.h"
 
 uint8_t ReadIO(uint16_t address) {
-    switch(address - 0xFF00) {
+    switch(address) {
         case IO_P1:;
-            uint8_t JoyPad_Register = io[0x00];
-            if (JoyPad_Register & (1 << 4)) { // RLUD
+            uint8_t JoyPad_Register = io[IO_P1];
+            if (JoyPad_Register & (1 << 4)) {
                 JoyPad_Register &= (keys.Start << 3) | (keys.Select << 2) | (keys.B << 1) | (keys.A << 0);
             }
             if (JoyPad_Register & (1 << 5)) {
@@ -12,23 +12,21 @@ uint8_t ReadIO(uint16_t address) {
             }
             return JoyPad_Register | 0xC0;
             
-        case IO_DIV_LSB: return timer.div & 0x00FF;
-        case IO_DIV_MSB: return (timer.div & 0xFF00) >> 8;
+        case IO_DIV: return (timer.div & 0xFF00) >> 8;
         case IO_TAC: return 0xF8 | (timer.enabled << 2) | timer.frequency;
         case IO_STAT: return ((*gpu.stat | 0x80) & 0xF8) | (gpu.ly_equals_lyc << 2) | (gpu.mode);
-        default: return io[address - 0xFF00];
+        default: return io[address];
     }
 }
 
 void WriteIO(uint16_t address, uint8_t data) {
-    switch(address - 0xFF00) {
+    switch(address) {
         case IO_P1: // JOYPAD
-            io[0x00] = (data & (3 << 4)) | (io[0x00] & ~(3 << 4));
+            io[IO_P1] = (data & (3 << 4)) | (io[IO_P1] & ~(3 << 4));
             break;
-        case IO_DIV_LSB:
-        case IO_DIV_MSB: timer.div = 0x0000; *timer.tima = 0x00; break;
-        case IO_TAC: WriteTimerControl(data); io[0x7] = 0xF8 | (data & 0x3); break;
-        case 0x0F: io[0x0F] = data | 0xE0; break;
+        case IO_DIV: timer.div = 0x0000; *timer.tima = 0x00; break;
+        case IO_TAC: WriteTimerControl(data); io[IO_TAC] = 0xF8 | (data & 0x3); break;
+        case IO_IF: io[IO_IF] = data | 0xE0; break;
 
         // Bit 7 altijd 1. Bits 0-2 behouden.
         case IO_STAT: *gpu.stat = ((data | 0x80) & 0xF8); break;
@@ -66,10 +64,45 @@ void WriteIO(uint16_t address, uint8_t data) {
             gpu.obpPalette[1][2] = (data & 0xC0) >> 6;
             break;
 
-        default: io[address - 0xFF00] = data;
+        default: io[address] = data;
     }
 }
 
 void ResetIO(void) {
-    return;
+
+    memset(io, 0xFF, sizeof(io));
+    
+    io[IO_P1] = 0xCF;
+    
+    io[IO_SB] = 0x00;
+    io[IO_SC] = 0x7E;
+
+    io[IO_TIMA] = 0x00;
+    io[IO_TMA] = 0x00;
+    io[IO_IF] = 0xE1;
+
+    io[IO_NR10] = 0x80;
+    io[IO_NR11] = 0xBF;
+    io[IO_NR12] = 0xF3;
+    io[IO_NR14] = 0xBF;
+    io[IO_NR21] = 0x3F;
+    io[IO_NR22] = 0x00;
+    io[IO_NR24] = 0xBF;
+    io[IO_NR30] = 0x7F;
+    io[IO_NR32] = 0x9F;
+    io[IO_NR34] = 0xBF;
+    io[IO_NR41] = 0xFF;
+    io[IO_NR42] = 0x00;
+    io[IO_NR43] = 0x00;
+    io[IO_NR44] = 0xBF;
+    io[IO_NR50] = 0x77;
+    io[IO_NR51] = 0xF3;
+    io[IO_NR52] = 0xF1;
+
+    io[IO_LCDC] = 0x91;
+    io[IO_STAT] = 0x85;
+    WriteIO(IO_BGP, 0xFC);
+    WriteIO(IO_OBP0, 0xFF);
+    WriteIO(IO_OBP1, 0xFF);
+
 }

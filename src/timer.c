@@ -2,7 +2,7 @@
 
 uint16_t cpuClocks = 0x0000;
 struct timer timer = {
-    0x0000, &io[0x05], &io[0x06], 0, 0
+    0x0000, &io[IO_TIMA], &io[IO_TMA], 0, 0
 };
 
 uint16_t timerClocksCount[] = { 1024, 16, 64, 256, };
