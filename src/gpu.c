@@ -33,9 +33,9 @@ const Colour_t palette[4] = {
 
 struct gpu gpu = { 
     &io[IO_LCDC], &io[IO_STAT], &io[IO_SCY], &io[IO_SCX],
-    &io[IO_LY], &io[IO_LYC], &io[IO_DMA], &io[IO_BGP], 
+    &io[IO_LYC], &io[IO_DMA], &io[IO_BGP],
     &io[IO_OBP0], &io[IO_OBP1], &io[IO_WY], &io[IO_WX], 
-    0, 0, 0, 
+    0, 0, 0, 0, 
     {0, 0, 0, 0}, { {3, 3, 3}, {3, 3, 3} }
 };
 
@@ -100,19 +100,19 @@ void gpuCycle(uint8_t cycles) {
 	if (gpu.cycles >= 456)
 	{
 
-        if (*gpu.ly <= 143 && !skipNextFrame) {
+        if (gpu.scanline <= 143 && !skipNextFrame) {
             PushScanLine();
         }
 
-        if (*gpu.ly == 143) {
+        if (gpu.scanline == 143) {
             DrawPixelBuffer();
             REQ_INTERRUPT(VBL_INTERRUPT);
         } 
-        else if (*gpu.ly == 153) {
-            *gpu.ly = 0xFF;
+        else if (gpu.scanline == 153) {
+            gpu.scanline = 0xFF;
         }
 
-		*gpu.ly += 1;
+		gpu.scanline += 1;
 
         UpdategpuMode();
         Compare_LY_LYC();
@@ -126,15 +126,13 @@ static inline void UpdategpuMode(void) {
     if (!LCD_ENABLED) {
         gpu.mode = HBLANK;
         gpu.ly_equals_lyc = 0;
-        gpu.cycles = 0;
-        *gpu.ly = 0x00;
         return;
     }
 
     uint8_t requestInterrupt = 0;
     uint8_t previousMode = gpu.mode;
 
-    if (*gpu.ly >= 144) {
+    if (gpu.scanline >= 144) {
         gpu.mode = VBLANK;
         requestInterrupt = *gpu.stat & (1 << 4);
     } else {
@@ -161,7 +159,11 @@ static inline void UpdategpuMode(void) {
 
 void Compare_LY_LYC(void) {
 
-    gpu.ly_equals_lyc = (*gpu.ly == *gpu.lyc);
+    if (gpu.scanline == 153 && gpu.cycles >= 4) {
+        gpu.ly_equals_lyc = (*gpu.lyc == 0);
+    } else {
+        gpu.ly_equals_lyc = (gpu.scanline == *gpu.lyc);
+    }
 
     if (gpu.ly_equals_lyc && COINCIDENCE_IRQ) {
         REQ_INTERRUPT(STAT_INTERRUPT);
@@ -183,7 +185,7 @@ void RenderTiles(void) {
     uint8_t usingWindow = 0;
     uint8_t signedAddressing = 0;
 
-    if (WINDOW_ENABLED && *gpu.wy <= *gpu.ly) {
+    if (WINDOW_ENABLED && *gpu.wy <= gpu.scanline) {
         usingWindow = 1;
     }
 
@@ -200,9 +202,9 @@ void RenderTiles(void) {
     uint8_t y;
 
     if (usingWindow) {
-        y = *gpu.ly - *gpu.wy;
+        y = gpu.scanline - *gpu.wy;
     } else {
-        y = *gpu.ly + *gpu.scy;
+        y = gpu.scanline + *gpu.scy;
     }
 
     TileMapOffset += ((uint8_t) (y / 8)) * 32;
@@ -238,7 +240,7 @@ void RenderTiles(void) {
                         ((data1 & mask) >> (7 - tilePos));
 
             scanLineRow[i] = colourID;
-            pixelBuffer[*gpu.ly][i] = palette[gpu.bgPalette[colourID]];
+            pixelBuffer[gpu.scanline][i] = palette[gpu.bgPalette[colourID]];
             ++i;
             ++tilePos;
 
@@ -277,11 +279,11 @@ void RenderSprites(void) {
             sprite.tile &= 0xFE;
         }
 
-        if (*gpu.ly < sy || *gpu.ly >= sy + verticalsize) {
+        if (gpu.scanline < sy || gpu.scanline >= sy + verticalsize) {
             continue;
         }
 
-        int16_t line = *gpu.ly - sy;
+        int16_t line = gpu.scanline - sy;
 
         if (SPRITE_YFLIP) {
             line = (verticalsize - 1) - line;
@@ -310,7 +312,7 @@ void RenderSprites(void) {
                                ((data2 & mask) ? 2 : 0);
 
             if (colourID) {
-                pixelBuffer[*gpu.ly][x] = palette[
+                pixelBuffer[gpu.scanline][x] = palette[
                     gpu.obpPalette[palNo][colourID - 1]
                 ];
             }

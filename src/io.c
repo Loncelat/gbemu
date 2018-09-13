@@ -15,6 +15,14 @@ uint8_t ReadIO(uint16_t address) {
         case IO_DIV: return (timer.div & 0xFF00) >> 8;
         case IO_TAC: return 0xF8 | (timer.enabled << 2) | timer.frequency;
         case IO_STAT: return ((*gpu.stat | 0x80) & 0xF8) | (gpu.ly_equals_lyc << 2) | (gpu.mode);
+        case IO_LY:
+            if (!LCD_ENABLED) {
+                return 0x00;
+            }
+            if (gpu.scanline == 153 && gpu.cycles >= 4) {
+                return 0x00;
+            }
+            return gpu.scanline;
         default: return io[address];
     }
 }

@@ -62,8 +62,6 @@ extern struct gpu {
     uint8_t * const scy;
     uint8_t * const scx;
     
-    // LCD current scanline. (144-153 = VBL)
-    uint8_t * const ly;
     uint8_t * const lyc;
 
     uint8_t * const dma;
@@ -78,6 +76,8 @@ extern struct gpu {
     uint8_t * const wx;
 
     uint16_t cycles;
+
+    uint8_t scanline;
 
     // STAT deels ontbonden.
     uint8_t ly_equals_lyc : 1;

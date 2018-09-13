@@ -27,7 +27,7 @@ void ResetCPU(void) {
 
     gpu.ly_equals_lyc = 0x1;
     gpu.mode = VBLANK;
-    gpu.cycles = 160;
+    gpu.cycles = 25;
 
     mbc.romBank = 1;
     mbc.ramBank = 0;
@@ -50,7 +50,7 @@ void PrintRegisters(void) {
     printf("LCDC: %02X\n", *gpu.control);
     printf("STAT: %02X\n", ReadByte(0xFF41));
     printf("DIV: %02X\n", timer.div);
-    printf("LY: %02X\n", *gpu.ly);
+    printf("LY: %02X\n", ReadIO(0x44));
     printf("CYCLES: %03i\n", gpu.cycles);
     printf("MODE: %02X\n", gpu.mode);
     // printf("TIMA: %02X\n", *timer.tima);
