@@ -5,10 +5,10 @@ uint8_t ReadIO(uint16_t address) {
         case IO_P1:;
             uint8_t JoyPad_Register = io[IO_P1];
             if (JoyPad_Register & (1 << 4)) {
-                JoyPad_Register &= (keys.Start << 3) | (keys.Select << 2) | (keys.B << 1) | (keys.A << 0);
+                JoyPad_Register &= (keys.Start << 3) | (keys.Select << 2) | (keys.B << 1) | (keys.A << 0) | 0xF0;
             }
             if (JoyPad_Register & (1 << 5)) {
-                JoyPad_Register &= (keys.Down << 3) | (keys.Up << 2) | (keys.Left << 1) | (keys.Right << 0);
+                JoyPad_Register &= (keys.Down << 3) | (keys.Up << 2) | (keys.Left << 1) | (keys.Right << 0) | 0xF0;
             }
             return JoyPad_Register | 0xC0;
             
