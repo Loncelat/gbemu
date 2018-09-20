@@ -18,8 +18,9 @@ uint8_t ReadIO(uint16_t address) {
         case IO_LY:
             if (gpu.scanline == 153 && gpu.cycles >= 4) {
                 return 0x00;
+            } else {
+                return gpu.scanline;
             }
-            return gpu.scanline;
         default: return io[address];
     }
 }
@@ -35,25 +36,30 @@ void WriteIO(uint16_t address, uint8_t data) {
 
         case IO_LCDC:
             if ( !(data & 0x80) && LCD_ENABLED) {
+                gpu.mode     = HBLANK;
+                gpu.cycles   = 0;
                 gpu.scanline = 0;
-                gpu.mode = HBLANK;
-                gpu.cycles = 0;
-                gpu.coincidence = 0;
             }
             else if ((data & 0x80) && !LCD_ENABLED) {
-                // Next frame is skipped after turning on LCD.
+
+                // Next frame after turning on PPU isn't rendered.
                 gpu.skipNextFrame = 1;
+                Compare_LY_LYC();
+
             }
             io[IO_LCDC] = data;
             break;
 
-        // Bit 7 altijd 1. Bits 0-2 behouden.
         case IO_STAT: *gpu.stat = ((data | 0x80) & 0xF8); break;
-        case IO_LY: break; // LY is read-only.
+        case IO_LY: break;
 
         case IO_LYC: 
             *gpu.lyc = data; 
-            Compare_LY_LYC();
+            
+            // LY - LYC comparison doesn't happen when the PPU is disabled.
+            if (LCD_ENABLED) {
+                Compare_LY_LYC();
+            }
             break;
 
         case IO_DMA: 
@@ -97,8 +103,8 @@ void ResetIO(void) {
     io[IO_SC] = 0x7E;
 
     io[IO_TIMA] = 0x00;
-    io[IO_TMA] = 0x00;
-    io[IO_IF] = 0xE1;
+    io[IO_TMA]  = 0x00;
+    io[IO_IF]   = 0xE1;
 
     io[IO_NR10] = 0x80;
     io[IO_NR11] = 0xBF;

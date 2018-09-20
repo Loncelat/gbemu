@@ -122,18 +122,12 @@ void gpuCycle(uint8_t cycles) {
 
 static inline void UpdategpuMode(void) {
 
-    // if (!LCD_ENABLED) {
-    //     gpu.mode = HBLANK;
-    //     gpu.coincidence = 0;
-    //     return;
-    // }
-
     uint8_t requestInterrupt = 0;
     uint8_t previousMode = gpu.mode;
 
     if (gpu.scanline >= 144) {
         gpu.mode = VBLANK;
-        requestInterrupt = *gpu.stat & (1 << 4);
+        requestInterrupt = (*gpu.stat & (1 << 4)) | (*gpu.stat & (1 << 5));
     } else {
         
         if (gpu.cycles < 80) {
