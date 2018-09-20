@@ -52,39 +52,53 @@ Gekkio's Acceptance Tests:
 |#|name|state|
 |-|-|-|
 |01|add_sp_e_timing|:x:|
-|02|boot_hwio-dmg0|:x:|
-|03|boot_hwio-dmg ABCXmgb|:white_check_mark:|
-|04|boot_hwio-S|:x:|
-|05|boot_regs-dmg0|:x:|
-|06|boot_regs-dmgABCX|:white_check_mark:|
-|07|call_cc_timing|:x:|
-|08|call_cc_timing2|:x:|
-|09|call timing|:x:|
-|10|call_timing 2|:x:|
-|11|di_timing-GS|:white_check_mark:|
-|12|div timing|:white_check_mark:|
-|13|ei_sequence|:white_check_mark:|
-|14|ei_timing|:white_check_mark:|
-|15|halt_ime0_ei|:white_check_mark:|
-|16|halt_ime0_nointr_timing|:x:|
-|17|halt_ime1_timing|:white_check_mark:|
-|18|halt_ime1_timing2-GS|:white_check_mark:|
-|19|if_ie_registers|:white_check_mark:|
-|20|intr_timing|:x:|
-|21|jp_cc_timing|:x:|
-|22|jp timing|:x:|
-|23|ld hl_sp_e timing|:x:|
-|24|oam_dma_restart|:x:|
-|25|oam_dma_start|:x:|
-|26|oam_dma_timing|:x:|
-|27|pop_timing|:x:|
-|28|push_timing|:x:|
-|29|rapid_di_ei|:white_check_mark:|
-|30|ret_cc_timing|:x:|
-|31|ret_timing|:x:|
-|32|reti_intr_timing|:x:|
-|33|reti_timing|:x:|
-|34|rst_timing|:x:|
+|02|boot_hwio-dmgABCXmgb|:white_check_mark:|
+|03|boot_regs-dmgABCX|:white_check_mark:|
+|04|call_cc_timing|:x:|
+|05|call_cc_timing2|:x:|
+|06|call timing|:x:|
+|07|call_timing 2|:x:|
+|08|di_timing-GS|:white_check_mark:|
+|09|div timing|:white_check_mark:|
+|10|ei_sequence|:white_check_mark:|
+|11|ei_timing|:white_check_mark:|
+|12|halt_ime0_ei|:white_check_mark:|
+|13|halt_ime0_nointr_timing|:x:|
+|14|halt_ime1_timing|:white_check_mark:|
+|15|halt_ime1_timing2-GS|:white_check_mark:|
+|16|if_ie_registers|:white_check_mark:|
+|17|intr_timing|:x:|
+|18|jp_cc_timing|:x:|
+|19|jp timing|:x:|
+|20|ld hl_sp_e timing|:x:|
+|21|oam_dma_restart|:x:|
+|22|oam_dma_start|:x:|
+|23|oam_dma_timing|:x:|
+|24|pop_timing|:x:|
+|25|push_timing|:x:|
+|26|rapid_di_ei|:white_check_mark:|
+|27|ret_cc_timing|:x:|
+|28|ret_timing|:x:|
+|29|reti_intr_timing|:x:|
+|30|reti_timing|:x:|
+|31|rst_timing|:x:|
+
+Gekkio's PPU Tests:
+
+|#|name|state|
+|-|-|-|
+|01|hblank_ly_scx_timing-GS|:x:|
+|02|intr_1_2_timing-GS|:white_check_mark:|
+|03|intr_2_0_timing|:white_check_mark:|
+|04|intr_2_mode0_timing|:x:|
+|05|intr_2_mode0_timing_sprites|:x:|
+|06|intr_2_mode3_timing|:x:|
+|07|intr_2_oam_ok_timing|:x:|
+|08|lcdon_timing-dmgABCmgbS|:x:|
+|09|lcdon_write_timing-GS|:x:|
+|10|stat_irq_blocking|:x:|
+|11|stat_lyc_onoff|:x:|
+|12|vblank_stat_intr-GS|:white_check_mark:|
 
 Gekkio's Bits Acceptance Tests:
 
