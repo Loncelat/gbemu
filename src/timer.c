@@ -1,11 +1,10 @@
 #include "timer.h"
 
-uint16_t cpuClocks = 0x0000;
 struct timer timer = {
-    0x0000, &io[IO_TIMA], &io[IO_TMA], 0, 0
+    &io[IO_TIMA], &io[IO_TMA], 0x0000, 0x0000, 0, 0
 };
 
-uint16_t timerClocksCount[] = { 1024, 16, 64, 256, };
+const uint16_t timerClocksCount[] = { 1024, 16, 64, 256, };
 
 void WriteTimerControl(uint8_t data) {
     timer.enabled = (data & 0x04);
@@ -15,11 +14,11 @@ void WriteTimerControl(uint8_t data) {
 void UpdateTimer(uint8_t cycles) {
     
     timer.div += cycles;
-    cpuClocks += cycles;
+    timer.cycles += cycles;
     
-    while (timer.enabled && cpuClocks >= timerClocksCount[timer.frequency]) {
+    while (timer.enabled && timer.cycles >= timerClocksCount[timer.frequency]) {
         
-        cpuClocks -= timerClocksCount[timer.frequency];
+        timer.cycles -= timerClocksCount[timer.frequency];
         *timer.tima += 1;
 
         // Als er een overflow was.

@@ -6,14 +6,11 @@
 #include "io.h"
 
 extern struct timer {
-    // Divider Register.
-    uint16_t div;
-
-    // Timer Counter.
     uint8_t * const tima;
-
-    // Timer Modulo Register.
     uint8_t * const tma;
+    
+    uint16_t div;
+    uint16_t cycles;
 
     uint8_t enabled;
     uint8_t frequency;
