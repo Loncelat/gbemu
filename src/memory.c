@@ -41,7 +41,7 @@ uint8_t ReadByte(uint16_t address) {
         
         case 0x8:
         case 0x9:
-            if (gpu.mode != DATA_TO_LCD) {
+            if (gpu.mode != DATA_TO_LCD || !LCD_ENABLED) {
                 return vram[address - 0x8000];
             }
             break;
@@ -59,7 +59,7 @@ uint8_t ReadByte(uint16_t address) {
                 return wram[address - 0xE000]; // Leest uit wram.
             }
             else if (address <= 0xFE9F) {
-                if (gpu.mode == HBLANK || gpu.mode == VBLANK) {
+                if (gpu.mode == HBLANK || gpu.mode == VBLANK || !LCD_ENABLED) {
                     return oam[address - 0xFE00];
                 }
             }
@@ -123,7 +123,7 @@ void WriteByte(uint16_t address, uint8_t data) {
                 wram[address - 0xE000] = data;
             }
             else if (address <= 0xFE9F) {
-                if (gpu.mode == HBLANK || gpu.mode == VBLANK) {
+                if (gpu.mode == HBLANK || gpu.mode == VBLANK || !LCD_ENABLED) {
                     oam[address - 0xFE00] = data;
                 }
             }
