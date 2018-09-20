@@ -53,7 +53,7 @@ Gekkio's Acceptance Tests:
 |-|-|-|
 |01|add_sp_e_timing|:x:|
 |02|boot_hwio-dmg0|:x:|
-|03|boot_hwio-dmg ABCXmgb|:x:|
+|03|boot_hwio-dmg ABCXmgb|:white_check_mark:|
 |04|boot_hwio-S|:x:|
 |05|boot_regs-dmg0|:x:|
 |06|boot_regs-dmgABCX|:white_check_mark:|
