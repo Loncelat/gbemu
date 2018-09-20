@@ -80,8 +80,10 @@ extern struct gpu {
     uint8_t scanline;
 
     // STAT deels ontbonden.
-    uint8_t ly_equals_lyc : 1;
+    uint8_t coincidence : 1;
     uint8_t mode : 2;
+
+    uint8_t skipNextFrame : 1;
 
     uint8_t bgPalette[4];
     uint8_t obpPalette[2][3];

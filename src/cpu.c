@@ -15,19 +15,20 @@ void ResetCPU(void) {
     registers.sp = 0xFFFE;
     registers.pc = 0x0100;
 
-    cpu.halted = NOT_HALTED;
-    cpu.bugged = 0;
+    cpu.halted  = NOT_HALTED;
+    cpu.bugged  = 0;
     cpu.stopped = 0;
 
     ResetIO();
     
-    timer.div = 0xABCC;
-    timer.enabled = 0;
+    timer.div       = 0xABCC;
+    timer.enabled   = 0;
     timer.frequency = 0;
 
-    gpu.ly_equals_lyc = 0x1;
-    gpu.mode = VBLANK;
-    gpu.cycles = 25;
+    gpu.scanline    = 153;
+    gpu.cycles      = 400;
+    gpu.mode        = VBLANK;
+    gpu.coincidence = 0x1;
 
     mbc.romBank = 1;
     mbc.ramBank = 0;
@@ -51,6 +52,7 @@ void PrintRegisters(void) {
     printf("STAT: %02X\n", ReadByte(0xFF41));
     printf("DIV: %02X\n", timer.div);
     printf("LY: %02X\n", ReadIO(0x44));
+    printf("SCN: %02X\n", gpu.scanline);
     printf("CYCLES: %03i\n", gpu.cycles);
     printf("MODE: %02X\n", gpu.mode);
     // printf("TIMA: %02X\n", *timer.tima);
@@ -75,6 +77,13 @@ void CPUCycle(void) {
         t_cycles += 4;
         return;
     }
+
+    #ifdef DEBUG
+    //if (registers.pc == 0x213 || registers.pc == 0x40) {
+        PrintRegisters();
+        getchar();
+    //}
+    #endif
 
     if (cpu.bugged) {
         opcode = ReadByte(registers.pc);

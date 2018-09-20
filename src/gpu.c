@@ -17,7 +17,6 @@ SDL_Event event;
 
 uint64_t vsyncStartTime;
 uint8_t waitForVsync = 1;
-uint8_t skipNextFrame = 0;
 
 // LCD van 160px bij 144px.
 Colour_t pixelBuffer[144][160];
@@ -35,7 +34,7 @@ struct gpu gpu = {
     &io[IO_LCDC], &io[IO_STAT], &io[IO_SCY], &io[IO_SCX],
     &io[IO_LYC], &io[IO_DMA], &io[IO_BGP],
     &io[IO_OBP0], &io[IO_OBP1], &io[IO_WY], &io[IO_WX], 
-    0, 0, 0, 0, 
+    0, 0, 0, 0, 0,
     {0, 0, 0, 0}, { {3, 3, 3}, {3, 3, 3} }
 };
 
@@ -88,8 +87,6 @@ void ResizeWindow(int8_t factor) {
 }
 
 void gpuCycle(uint8_t cycles) {
-    
-	UpdategpuMode();
 
 	if (!LCD_ENABLED) {
         return;
@@ -100,7 +97,7 @@ void gpuCycle(uint8_t cycles) {
 	if (gpu.cycles >= 456)
 	{
 
-        if (gpu.scanline <= 143 && !skipNextFrame) {
+        if (gpu.scanline <= 143 && !gpu.skipNextFrame) {
             PushScanLine();
         }
 
@@ -119,15 +116,17 @@ void gpuCycle(uint8_t cycles) {
 
 		gpu.cycles -= 456;
 	}
+
+    UpdategpuMode();
 }
 
 static inline void UpdategpuMode(void) {
 
-    if (!LCD_ENABLED) {
-        gpu.mode = HBLANK;
-        gpu.ly_equals_lyc = 0;
-        return;
-    }
+    // if (!LCD_ENABLED) {
+    //     gpu.mode = HBLANK;
+    //     gpu.coincidence = 0;
+    //     return;
+    // }
 
     uint8_t requestInterrupt = 0;
     uint8_t previousMode = gpu.mode;
@@ -151,8 +150,11 @@ static inline void UpdategpuMode(void) {
 
     }
 
-    if (requestInterrupt && gpu.mode != previousMode) {
-        REQ_INTERRUPT(STAT_INTERRUPT);
+    if (gpu.mode != previousMode && requestInterrupt) {
+
+        if (requestInterrupt) {
+            REQ_INTERRUPT(STAT_INTERRUPT);
+        }
     }
 
 }
@@ -160,12 +162,12 @@ static inline void UpdategpuMode(void) {
 void Compare_LY_LYC(void) {
 
     if (gpu.scanline == 153 && gpu.cycles >= 4) {
-        gpu.ly_equals_lyc = (*gpu.lyc == 0);
+        gpu.coincidence = (*gpu.lyc == 0);
     } else {
-        gpu.ly_equals_lyc = (gpu.scanline == *gpu.lyc);
+        gpu.coincidence = (gpu.scanline == *gpu.lyc);
     }
 
-    if (gpu.ly_equals_lyc && COINCIDENCE_IRQ) {
+    if (gpu.coincidence && COINCIDENCE_IRQ) {
         REQ_INTERRUPT(STAT_INTERRUPT);
     }
 
@@ -331,7 +333,7 @@ void DrawPixelBuffer(void) {
         HandleInput(&event);
     }
 
-    skipNextFrame = 0;
+    gpu.skipNextFrame = 0;
 
     if (waitForVsync) {
 
@@ -352,6 +354,6 @@ void DrawPixelBuffer(void) {
         SDL_RenderPresent(LCDRenderer);
 
     } else {
-        skipNextFrame = 1;
+        gpu.skipNextFrame = 1;
     }
 }

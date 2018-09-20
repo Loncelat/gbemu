@@ -14,11 +14,8 @@ uint8_t ReadIO(uint16_t address) {
             
         case IO_DIV: return (timer.div & 0xFF00) >> 8;
         case IO_TAC: return 0xF8 | (timer.enabled << 2) | timer.frequency;
-        case IO_STAT: return ((*gpu.stat | 0x80) & 0xF8) | (gpu.ly_equals_lyc << 2) | (gpu.mode);
+        case IO_STAT: return ((*gpu.stat | 0x80) & 0xF8) | (gpu.coincidence << 2) | (gpu.mode);
         case IO_LY:
-            if (!LCD_ENABLED) {
-                return 0x00;
-            }
             if (gpu.scanline == 153 && gpu.cycles >= 4) {
                 return 0x00;
             }
@@ -35,6 +32,20 @@ void WriteIO(uint16_t address, uint8_t data) {
         case IO_DIV: timer.div = 0x0000; *timer.tima = 0x00; break;
         case IO_TAC: WriteTimerControl(data); io[IO_TAC] = 0xF8 | (data & 0x3); break;
         case IO_IF: io[IO_IF] = data | 0xE0; break;
+
+        case IO_LCDC:
+            if ( !(data & 0x80) && LCD_ENABLED) {
+                gpu.scanline = 0;
+                gpu.mode = HBLANK;
+                gpu.cycles = 0;
+                gpu.coincidence = 0;
+            }
+            else if ((data & 0x80) && !LCD_ENABLED) {
+                // Next frame is skipped after turning on LCD.
+                gpu.skipNextFrame = 1;
+            }
+            io[IO_LCDC] = data;
+            break;
 
         // Bit 7 altijd 1. Bits 0-2 behouden.
         case IO_STAT: *gpu.stat = ((data | 0x80) & 0xF8); break;
@@ -109,6 +120,12 @@ void ResetIO(void) {
 
     io[IO_LCDC] = 0x91;
     io[IO_STAT] = 0x85;
+    io[IO_LY]   = 0x99;
+    io[IO_LYC]  = 0x00;
+    io[IO_SCY]  = 0x00;
+    io[IO_SCX]  = 0x00;
+    io[IO_WY]   = 0x00;
+    io[IO_WX]   = 0x00;
     WriteIO(IO_BGP, 0xFC);
     WriteIO(IO_OBP0, 0xFF);
     WriteIO(IO_OBP1, 0xFF);
