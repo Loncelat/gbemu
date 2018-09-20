@@ -127,19 +127,19 @@ static inline void UpdategpuMode(void) {
 
     if (gpu.scanline >= 144) {
         gpu.mode = VBLANK;
-        requestInterrupt = (*gpu.stat & (1 << 4)) | (*gpu.stat & (1 << 5));
+        requestInterrupt = VBLANK_IRQ | OAM_SEARCH_IRQ;
     } else {
         
         if (gpu.cycles < 80) {
             gpu.mode = SEARCH_OAM_RAM;
-            requestInterrupt = *gpu.stat & (1 << 5);
+            requestInterrupt = OAM_SEARCH_IRQ;
         }
         else if (gpu.cycles < 252) {
             gpu.mode = DATA_TO_LCD;
         }
         else {
             gpu.mode = HBLANK;
-            requestInterrupt = *gpu.stat & (1 << 3);
+            requestInterrupt = HBLANK_IRQ;
         }
 
     }

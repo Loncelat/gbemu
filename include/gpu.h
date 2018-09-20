@@ -23,7 +23,7 @@
 #define VSYNC_WAIT (SDL_Delay((FRAME_FREQUENCY) - (SDL_GetPerformanceCounter() - vsyncStartTime) * 1000.0 / SDL_GetPerformanceFrequency()))
 
 #define COINCIDENCE_IRQ (*gpu.stat & (1 << 6))
-#define OAM_CHECK_IRQ   (*gpu.stat & (1 << 5))
+#define OAM_SEARCH_IRQ   (*gpu.stat & (1 << 5))
 #define VBLANK_IRQ      (*gpu.stat & (1 << 4))
 #define HBLANK_IRQ      (*gpu.stat & (1 << 3))
 
