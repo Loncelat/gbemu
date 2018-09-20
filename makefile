@@ -1,26 +1,25 @@
-
-SRC    := src/*.c
-INCL   := -Iinclude -ISDL2/include
-SRCDIR := src
-OBJDIR := obj
-OBJS   := $(SRC:.c=.o)
+# Define directories.
+SRCDIR  := src
+OBJDIR  := obj
+INCLDIR := include
+PROGDIR := bin
 
 CC     := gcc
 LIB    := -LSDL2/lib
-MAIN   := bin/gbemu.exe
+INCL   := -I$(INCLDIR) -ISDL2/include
+MAIN   := gbemu
 
-CFLAGS := -Wall -Wextra -O2 -s -flto -Wl,--no-warn-search-mismatch -pedantic -std=c11 -Wl,-subsystem,windows
-LFLAGS := -lmingw32 -lSDL2main -lSDL2
+# Define flags
+CFLAGS := -Wall -Wextra -O2 -s -flto -pedantic -std=c11
+LFLAGS := -Wl,-subsystem,windows -Wl,--no-warn-search-mismatch 
+LIBS   := -lmingw32 -lSDL2main -lSDL2
 
 SRC := $(wildcard $(SRCDIR)/*.c)
 OBJ := $(patsubst %, $(OBJDIR)/%, $(notdir $(SRC:%.c=%.o)))
+DEP := $(wildcard $(INCLDIR)/*.h)
 
 $(MAIN): $(OBJ)
-	$(CC) $(CFLAGS) $(INCL) $(LIB) -o $@ $^ $(LFLAGS)
+	$(CC) $(CFLAGS) $(LFLAGS) $(INCL) $(LIB) -o $(PROGDIR)/$@ $^ $(LIBS)
     
-.phony: debug
-debug: $(OBJ)
-	$(CC) $(CFLAGS) $(INCL) $(LIB) -o $@ $^ $(LFLAGS)
-    
-$(OBJDIR)/%.o: src/%.c
+$(OBJDIR)/%.o: $(SRCDIR)/%.c $(DEP)
 	$(CC) $(CFLAGS) $(INCL) $(LIB) -c $< -o $@
