@@ -29,5 +29,5 @@
 #define HEADER_RAMSIZE_OFFSET 0x149
 
 uint8_t LoadRom(char **argv);
-void InitMemory();
-void InitMBCType(uint8_t cartridgeType, char *romname, char **argv);
+void InitMemory(char *romname, char **argv);
+void InitMBCType(uint8_t cartridgeType);

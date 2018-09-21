@@ -9,20 +9,24 @@ uint8_t ReadRom(uint16_t address) {
             return MBC1_ROM_READ(address);
             
         default:
-            break;
-    }
-
-    if (address <= 0x3FFF) {
-        return rom[address];
-    } else {
-        return rom[(mbc.romBank * 0x4000) + (address & 0x3FFF)]; 
+            if (address <= 0x3FFF) {
+                return rom[address];
+            } else {
+                return rom[(mbc.romBank * 0x4000) + (address & 0x3FFF)]; 
+            }
     }
 }
 
 void WriteRom(uint16_t address, uint8_t data) {
 
     if (address <= 0x1FFF) {
-        mbc.RAM_EN = (data & 0x0F) == 0x0A;
+
+        if (mbc.type == MBC2 && !(address & 0x0100)) {
+            // Bit 9 must be 0 to toggle RAM_EN.
+            mbc.RAM_EN = !mbc.RAM_EN;
+        } else {
+            mbc.RAM_EN = (data & 0x0F) == 0x0A;
+        }
         return;
     }
 
@@ -32,6 +36,10 @@ void WriteRom(uint16_t address, uint8_t data) {
 
         case MBC1:
             MBC1_ROM_WRITE(address, data);
+            break;
+
+        case MBC2:
+            MBC2_ROM_WRITE(address, data);
             break;
 
         case MBC3:
@@ -59,6 +67,9 @@ uint8_t ReadRam(uint16_t address) {
         case MBC1:
             return MBC1_RAM_READ(address);
 
+        case MBC2:
+            return MBC2_RAM_READ(address);
+
         case MBC3:
             return MBC3_RAM_READ(address);
 
@@ -80,6 +91,10 @@ void WriteRam(uint16_t address, uint8_t data) {
     switch (mbc.type) {
         case MBC1:
             MBC1_RAM_WRITE(address, data);
+            break;
+
+        case MBC2:
+            MBC2_RAM_WRITE(address, data);
             break;
 
         case MBC3:

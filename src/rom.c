@@ -66,11 +66,8 @@ uint8_t LoadRom(char **argv) {
     snprintf(title, sizeof(title), "%s%s%s", EMU_NAME, " - ", name);
     SDL_SetWindowTitle(window, title);
 
-    rom = malloc(mbc.rombanks * 0x4000);
-    sram = malloc(mbc.ramsize);
-
-
-    InitMBCType(header[HEADER_CTYPE_OFFSET], name, argv);
+    InitMBCType(header[HEADER_CTYPE_OFFSET]);
+    InitMemory(name, argv);
 	
 	rewind(f);
 
@@ -78,7 +75,7 @@ uint8_t LoadRom(char **argv) {
     fclose(f); return 0;
 }
 
-void InitMBCType(uint8_t cartridgeType, char *romname, char **argv) {
+void InitMBCType(uint8_t cartridgeType) {
 
     switch (cartridgeType) {
         case 0x00:
@@ -94,9 +91,11 @@ void InitMBCType(uint8_t cartridgeType, char *romname, char **argv) {
             break;
         case 0x05:
             mbc.type = MBC2;
+            mbc.ramsize = 512;
             break;
         case 0x06:
             mbc.type = MBC2;
+            mbc.ramsize = 512;
             mbc.battery = 1;
             break;
         case 0x08:
@@ -134,8 +133,16 @@ void InitMBCType(uint8_t cartridgeType, char *romname, char **argv) {
             mbc.type = ROM;
     }
 
-    // Maak/lees het geheugenbestand.
-    if (mbc.battery) {
+}
+
+void InitMemory(char *romname, char **argv) {
+
+    // Allocate memory for ROM and RAM.
+    rom = malloc(mbc.rombanks * 0x4000);
+    sram = malloc(mbc.ramsize);
+
+    // Create .sav file if neccessary and read it into sram.
+    if (mbc.battery && mbc.ramsize > 0) {
         #if defined(_WIN32)
 
         char savDir[_MAX_DRIVE + _MAX_DIR + _MAX_FNAME + sizeof(SAVE_EXT)];
@@ -205,5 +212,4 @@ void InitMBCType(uint8_t cartridgeType, char *romname, char **argv) {
     }
 
     // TODO: RTC enz.
-
 }
