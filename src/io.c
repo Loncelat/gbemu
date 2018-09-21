@@ -44,7 +44,7 @@ void WriteIO(uint16_t address, uint8_t data) {
 
                 // Next frame after turning on PPU isn't rendered.
                 gpu.skipNextFrame = 1;
-                Compare_LY_LYC();
+                UpdateCoincidence();
 
             }
             io[IO_LCDC] = data;
@@ -58,7 +58,7 @@ void WriteIO(uint16_t address, uint8_t data) {
             
             // LY - LYC comparison doesn't happen when the PPU is disabled.
             if (LCD_ENABLED) {
-                Compare_LY_LYC();
+                UpdateCoincidence();
             }
             break;
 

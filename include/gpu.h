@@ -78,6 +78,7 @@ extern struct gpu {
     uint16_t cycles;
 
     uint8_t scanline;
+    uint8_t statusirq;
 
     // STAT deels ontbonden.
     uint8_t coincidence : 1;
@@ -101,4 +102,7 @@ void ResizeWindow(int8_t factor);
 void gpu_quit(void);
 
 void gpuCycle(uint8_t cycles);
-void Compare_LY_LYC(void);
+
+uint8_t GetStatusIRQ(void);
+void UpdateStatusIRQ(void);
+void UpdateCoincidence(void);

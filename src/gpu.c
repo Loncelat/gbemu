@@ -34,7 +34,7 @@ struct gpu gpu = {
     &io[IO_LCDC], &io[IO_STAT], &io[IO_SCY], &io[IO_SCX],
     &io[IO_LYC], &io[IO_DMA], &io[IO_BGP],
     &io[IO_OBP0], &io[IO_OBP1], &io[IO_WY], &io[IO_WX], 
-    0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0,
     {0, 0, 0, 0}, { {3, 3, 3}, {3, 3, 3} }
 };
 
@@ -111,8 +111,7 @@ void gpuCycle(uint8_t cycles) {
 
 		gpu.scanline += 1;
 
-        UpdategpuMode();
-        Compare_LY_LYC();
+        UpdateCoincidence();
 
 		gpu.cycles -= 456;
 	}
@@ -122,49 +121,45 @@ void gpuCycle(uint8_t cycles) {
 
 static inline void UpdategpuMode(void) {
 
-    uint8_t requestInterrupt = 0;
-    uint8_t previousMode = gpu.mode;
-
     if (gpu.scanline >= 144) {
         gpu.mode = VBLANK;
-        requestInterrupt = VBLANK_IRQ | OAM_SEARCH_IRQ;
-    } else {
-        
+    } else {        
         if (gpu.cycles < 80) {
             gpu.mode = SEARCH_OAM_RAM;
-            requestInterrupt = OAM_SEARCH_IRQ;
         }
         else if (gpu.cycles < 252) {
             gpu.mode = DATA_TO_LCD;
         }
         else {
             gpu.mode = HBLANK;
-            requestInterrupt = HBLANK_IRQ;
-        }
-
-    }
-
-    if (gpu.mode != previousMode && requestInterrupt) {
-
-        if (requestInterrupt) {
-            REQ_INTERRUPT(STAT_INTERRUPT);
         }
     }
 
+    UpdateStatusIRQ();
 }
 
-void Compare_LY_LYC(void) {
+uint8_t GetStatusIRQ(void) {
+    return (HBLANK_IRQ && gpu.mode == HBLANK) 
+        || (VBLANK_IRQ && gpu.mode == VBLANK)
+        || (OAM_SEARCH_IRQ && gpu.mode == SEARCH_OAM_RAM)
+        || (COINCIDENCE_IRQ && gpu.coincidence);
+}
 
+void UpdateStatusIRQ(void) {
+    uint8_t irq = gpu.statusirq;
+    gpu.statusirq = GetStatusIRQ();
+
+    if (!irq && gpu.statusirq) {
+        REQ_INTERRUPT(STAT_INTERRUPT);
+    }
+}
+
+void UpdateCoincidence(void) {
     if (gpu.scanline == 153 && gpu.cycles >= 4) {
         gpu.coincidence = (*gpu.lyc == 0);
     } else {
         gpu.coincidence = (gpu.scanline == *gpu.lyc);
     }
-
-    if (gpu.coincidence && COINCIDENCE_IRQ) {
-        REQ_INTERRUPT(STAT_INTERRUPT);
-    }
-
 }
 
 void PushScanLine(void) {
