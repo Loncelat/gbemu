@@ -26,7 +26,7 @@ void ResetCPU(void) {
     timer.frequency = 0;
 
     gpu.scanline    = 153;
-    gpu.cycles      = 400;
+    gpu.cycles      = 404;
     gpu.mode        = VBLANK;
     gpu.coincidence = 0x1;
 
@@ -58,7 +58,7 @@ void PrintRegisters(void) {
     // printf("TIMA: %02X\n", *timer.tima);
     // printf("TMA: %02X\n", *timer.tma);
     // printf("TAC: %02X\n", ReadByte(0xFF07));
-    // printf("ROM: %02X\n\n", mbc.romBank);
+    printf("ROM: %02X\n\n", mbc.romBank);
 }
 
 void CPUCycle(void) {
@@ -79,10 +79,11 @@ void CPUCycle(void) {
     }
 
     #ifdef DEBUG
-    //if (registers.pc == 0x213 || registers.pc == 0x40) {
+    if (registers.pc == 0x4006) {
         PrintRegisters();
+        printf("OPCODE: %02X\n", ReadByte(registers.pc));
         getchar();
-    //}
+    }
     #endif
 
     if (cpu.bugged) {
@@ -90,7 +91,7 @@ void CPUCycle(void) {
         cpu.bugged = 0;
     } else {
         opcode = ReadByte(registers.pc);
-        registers.pc++;
+        registers.pc += 1;
     }
 
     t_cycles += ExecuteInstruction(opcode);
