@@ -76,14 +76,14 @@ void WriteIO(uint16_t address, uint8_t data) {
             break;
 
         case IO_OBP0: 
-            *gpu.obp0 = data | 0x03;
+            *gpu.obp0 = data;
             gpu.obpPalette[0][0] = (data & 0x0C) >> 2;
             gpu.obpPalette[0][1] = (data & 0x30) >> 4;
             gpu.obpPalette[0][2] = (data & 0xC0) >> 6;
             break;
         
         case IO_OBP1: 
-            *gpu.obp1 = data | 0x03;
+            *gpu.obp1 = data;
             gpu.obpPalette[1][0] = (data & 0x0C) >> 2;
             gpu.obpPalette[1][1] = (data & 0x30) >> 4;
             gpu.obpPalette[1][2] = (data & 0xC0) >> 6;
