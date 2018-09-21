@@ -98,7 +98,7 @@ Gekkio's PPU Tests:
 |09|lcdon_write_timing-GS|:x:|
 |10|stat_irq_blocking|:white_check_mark:|
 |11|stat_lyc_onoff|:x:|
-|12|vblank_stat_intr-GS|:white_check_mark:|
+|12|vblank_stat_intr-GS|:x:|
 
 Gekkio's Bits Acceptance Tests:
 
