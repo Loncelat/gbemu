@@ -1,23 +1,9 @@
 #pragma once
 
-#ifdef _WIN32
-
-#include <stdlib.h>
-#include <windows.h>
-
-#else
-
-#include <unistd.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <libgen.h>
-
-#endif
-
-
 #include <stdint.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include "memory.h"
 #include "mbc.h"
 #include "gpu.h"
