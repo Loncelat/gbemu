@@ -9,8 +9,7 @@
     Bepaal de soort MBC.
     Zorg ervoor dat rom[] en sram[] de juiste grootte worden.
 */
-uint8_t LoadRom(char **argv) {
-    char *file = argv[1];
+uint8_t LoadRom(char *file) {
     char name[17];
     uint8_t header[HEADER_LENGTH];
 	size_t fileLength;
@@ -67,7 +66,7 @@ uint8_t LoadRom(char **argv) {
     SDL_SetWindowTitle(window, title);
 
     InitMBCType(header[HEADER_CTYPE_OFFSET]);
-    InitMemory(name, argv);
+    InitMemory(name, file);
 	
 	rewind(f);
 
@@ -135,7 +134,7 @@ void InitMBCType(uint8_t cartridgeType) {
 
 }
 
-void InitMemory(char *romname, char **argv) {
+void InitMemory(char *romname, char *romPath) {
 
     // Allocate memory for ROM and RAM.
     rom = malloc(mbc.rombanks * 0x4000);
@@ -143,50 +142,16 @@ void InitMemory(char *romname, char **argv) {
 
     // Create .sav file if neccessary and read it into sram.
     if (mbc.battery && mbc.ramsize > 0) {
-        #if defined(_WIN32)
 
-        char savDir[_MAX_DRIVE + _MAX_DIR + _MAX_FNAME + sizeof(SAVE_EXT)];
-        char sav[_MAX_DRIVE + _MAX_DIR + _MAX_FNAME + sizeof(SAVE_EXT)];
+        static char sav[1024];
 
-        char fulldir[_MAX_DRIVE + _MAX_DIR + _MAX_FNAME + _MAX_EXT];
-        char drv[_MAX_DRIVE];
-        char dir[_MAX_DIR];
-        
-        GetModuleFileName(NULL, fulldir, sizeof(fulldir));
-
-        _splitpath(fulldir, drv, dir, NULL, NULL);
-
-        snprintf(savDir, sizeof(sav), "%s%s%s", drv, dir, SAVE_FOLDER);
-        CreateDirectory(sav, NULL);
-
-        // Fallback als er geen romname in de header staat.
         if (strlen(romname) > 0) {
-            snprintf(sav, sizeof(sav), "%s%s%s", savDir, romname, SAVE_EXT);
+            snprintf(sav, sizeof(sav), "%s%s%s%s", GetBasePath(), SAVE_FOLDER, romname, SAVE_EXT);
         } else {
-            char fname[_MAX_FNAME];
-            _splitpath(argv[1], NULL, NULL, fname, NULL);
-            snprintf(sav, sizeof(sav), "%s%s%s%s", savDir, FB_PREFIX, fname, SAVE_EXT);
+            char *fileName = GetFileName(romPath, strlen(romPath));
+            snprintf(sav, sizeof(sav), "%s%s%s%s%s", GetBasePath(), SAVE_FOLDER, FB_PREFIX, fileName, SAVE_EXT);
+            free(fileName);
         }
-
-        #elif defined(__linux__)
-
-	    char sav[255];
-        char progdir[255];
-	    char savedir[255];
-
-        readlink("/proc/self/exe", progdir, sizeof(progdir));
-	
-        snprintf(savedir, sizeof(savedir), "%s%s%s", dirname(progdir), "/",  SAVE_FOLDER);
-        mkdir(savedir, 0777);
-
-        if (strlen(romname) > 0) {
-            snprintf(sav, sizeof(sav), "%s%s%s", savedir, romname, SAVE_EXT);
-	    }
-        else {
-            snprintf(sav, sizeof(sav), "%s%s%s%s", savedir, FB_PREFIX, basename(argv[1]), SAVE_EXT);
-        }
-
-        #endif
 
         mbc.save = fopen(sav, "rb+");
 
@@ -212,4 +177,51 @@ void InitMemory(char *romname, char **argv) {
     }
 
     // TODO: RTC enz.
+}
+
+const char *GetBasePath(void) {
+    static const char *path = NULL;
+
+    // Don't call SDL_GetBasePath() multiple times.
+    if (!path) {
+        path = SDL_GetBasePath();
+
+        if (!path) {
+            path = "./";
+        }
+    }
+
+    return path;
+}
+
+char *GetFileName(char *file, size_t length) {
+    size_t start = 0;
+    size_t end = length;
+
+    for (size_t i = length; i != 0; i--) {
+
+        // Strip the extension.
+        if (file[i] == '.' && end == length) {
+            end = i;
+        }
+
+        if (file[i] == '/') {
+            start = i + 1;
+            break;
+        }
+        #ifdef _WIN32
+        // Both \ and / are separators on Windows.
+        if (file[i] == '\\') {
+            start = i + 1;
+            break;
+        }
+        #endif
+    }
+
+    // Allocate space for the string.
+    char *fileName = malloc(end - start + 1);
+    memset(fileName, 0, end - start + 1);
+    strncpy(fileName, file + start, end - start);
+
+    return fileName;
 }

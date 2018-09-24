@@ -22,7 +22,7 @@ int main(int argc, char **argv) {
     }
 
     if (SetupVideo()) { gbemu_cleanup(); return 1; }
-    if (LoadRom(argv)) { gbemu_cleanup(); return 1; }
+    if (LoadRom(argv[1])) { gbemu_cleanup(); return 1; }
     //SetupAudio();
 
     ResetCPU();

@@ -28,6 +28,9 @@
 #define HEADER_ROMSIZE_OFFSET 0x148
 #define HEADER_RAMSIZE_OFFSET 0x149
 
-uint8_t LoadRom(char **argv);
-void InitMemory(char *romname, char **argv);
+uint8_t LoadRom(char *file);
+void InitMemory(char *romname, char *file);
 void InitMBCType(uint8_t cartridgeType);
+
+const char *GetBasePath(void);
+char *GetFileName(char *file, size_t length);
