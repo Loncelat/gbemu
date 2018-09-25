@@ -94,7 +94,7 @@ void gpuCycle(uint8_t cycles) {
 
 	gpu.cycles += cycles;
 
-	if (gpu.cycles >= 456)
+	if (gpu.cycles > 456)
 	{
 
         if (gpu.scanline <= 143 && !gpu.skipNextFrame) {
