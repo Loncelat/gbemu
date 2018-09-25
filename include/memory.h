@@ -11,6 +11,7 @@
 #include "gpu.h"
 #include "io.h"
 
+extern uint8_t bootrom[0x100];
 extern uint8_t *rom; // 0000-7FFF ROM | cartridge data
 extern uint8_t vram[0x2000]; // 8000-9FFF Video RAM
 extern uint8_t *sram; // A000-BFFF External RAM

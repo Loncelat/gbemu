@@ -4,6 +4,10 @@
 #define SAVE_FOLDER "saves/"
 #define FB_PREFIX "rom_"
 
+#define BOOTROM_NAME "bootrom.bin"
+#define BOOTROM_FOUND (1)
+#define BOOTROM_NOT_FOUND (0)
+
 /*
     Lees de header van de cartridge in.
     Bepaal de soort MBC.
@@ -143,7 +147,7 @@ void InitMemory(char *romname, char *romPath) {
     // Create .sav file if neccessary and read it into sram.
     if (mbc.battery && mbc.ramsize > 0) {
 
-        static char sav[1024];
+        char sav[1024];
 
         if (strlen(romname) > 0) {
             snprintf(sav, sizeof(sav), "%s%s%s%s", GetBasePath(), SAVE_FOLDER, romname, SAVE_EXT);
@@ -177,6 +181,28 @@ void InitMemory(char *romname, char *romPath) {
     }
 
     // TODO: RTC enz.
+}
+
+void LoadBootRom(void) {
+    char path[1024];
+    snprintf(path, sizeof(path), "%s%s", GetBasePath(), BOOTROM_NAME);
+
+    FILE *f = fopen(path, "rb");
+
+    if (!f) {
+        fclose(f);
+        mbc.useBootRom = BOOTROM_NOT_FOUND;
+        mbc.bootromEnabled = 0;
+        return;
+    }
+
+    // Pad with 0xFF.
+    memset(bootrom, 0xFF, sizeof(bootrom));
+    fread(bootrom, 1, sizeof(bootrom), f);
+
+    mbc.useBootRom = BOOTROM_FOUND;
+    mbc.bootromEnabled = 1;
+    printf("Found boot rom.\n");
 }
 
 const char *GetBasePath(void) {
@@ -219,8 +245,7 @@ char *GetFileName(char *file, size_t length) {
     }
 
     // Allocate space for the string.
-    char *fileName = malloc(end - start + 1);
-    memset(fileName, 0, end - start + 1);
+    char *fileName = calloc(end - start + 1, 1);
     strncpy(fileName, file + start, end - start);
 
     return fileName;

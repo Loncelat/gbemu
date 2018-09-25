@@ -25,6 +25,8 @@ int main(int argc, char **argv) {
     if (LoadRom(argv[1])) { gbemu_cleanup(); return 1; }
     //SetupAudio();
 
+    LoadBootRom();
+
     ResetCPU();
 
     vsyncStartTime = SDL_GetPerformanceCounter();

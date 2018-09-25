@@ -52,6 +52,8 @@ enum IORegisters {
     IO_OBP1 = 0x49,
     IO_WY = 0x4A,
     IO_WX = 0x4B,
+
+    IO_BOOT = 0x50,
 };
 
 uint8_t ReadIO(uint16_t address);

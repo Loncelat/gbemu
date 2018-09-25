@@ -8,27 +8,49 @@ struct cpu cpu = {
 };
 
 void ResetCPU(void) {
-    registers.af = 0x01B0;
-    registers.bc = 0x0013;
-    registers.de = 0x00D8;
-    registers.hl = 0x014D;
-    registers.sp = 0xFFFE;
-    registers.pc = 0x0100;
 
-    cpu.halted  = NOT_HALTED;
-    cpu.bugged  = 0;
-    cpu.stopped = 0;
+    if (mbc.useBootRom) {
+        registers.af = 0;
+        registers.bc = 0;
+        registers.de = 0;
+        registers.hl = 0;
+        registers.sp = 0;
+        registers.pc = 0;
 
-    ResetIO();
-    
-    timer.div       = 0xABCC;
-    timer.enabled   = 0;
-    timer.frequency = 0;
+        timer.div = 0;
+        timer.enabled = 0;
+        timer.frequency = 0;
 
-    gpu.scanline    = 153;
-    gpu.cycles      = 404;
-    gpu.mode        = VBLANK;
-    gpu.coincidence = 0x1;
+        gpu.scanline = 0;
+        gpu.cycles = 0;
+        gpu.mode = HBLANK;
+        gpu.coincidence = 1;
+        io[IO_P1] = 0xCF;
+        io[0x26] = 0x70;
+
+    } else {
+        registers.af = 0x01B0;
+        registers.bc = 0x0013;
+        registers.de = 0x00D8;
+        registers.hl = 0x014D;
+        registers.sp = 0xFFFE;
+        registers.pc = 0x0100;
+
+        cpu.halted  = NOT_HALTED;
+        cpu.bugged  = 0;
+        cpu.stopped = 0;
+
+        ResetIO();
+        
+        timer.div       = 0xABCC;
+        timer.enabled   = 0;
+        timer.frequency = 0;
+
+        gpu.scanline    = 153;
+        gpu.cycles      = 404;
+        gpu.mode        = VBLANK;
+        gpu.coincidence = 0x1;
+    }
 
     mbc.romBank = 1;
     mbc.ramBank = 0;
@@ -79,9 +101,9 @@ void CPUCycle(void) {
     }
 
     #ifdef DEBUG
-    if (registers.pc == 0x4006) {
+    if (registers.pc == 0x28) {
         PrintRegisters();
-        printf("OPCODE: %02X\n", ReadByte(registers.pc));
+        printf("104: %x\n", rom[0x104]);
         getchar();
     }
     #endif

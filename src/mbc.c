@@ -1,6 +1,6 @@
 #include "mbc.h"
 
-struct mbc mbc = { 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0 };
+struct mbc mbc = { 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0 };
 
 
 uint8_t ReadRom(uint16_t address) {

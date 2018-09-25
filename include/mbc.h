@@ -18,6 +18,9 @@ extern struct mbc {
     uint8_t battery : 1;
     uint8_t timer : 1;
 
+    uint8_t bootromEnabled : 1;
+    uint8_t useBootRom : 1;
+
     uint16_t romBank;
 
     uint8_t type;

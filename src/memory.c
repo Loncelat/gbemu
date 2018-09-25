@@ -5,6 +5,7 @@
     TODO: fatsoenlijke werking OAM DMA.
 */
 
+uint8_t bootrom[0x100];
 uint8_t *rom;        // 0000-7FFF ROM | cartridge data
 uint8_t vram[0x2000]; // 8000-9FFF Video RAM
 uint8_t *sram;        // A000-BFFF External RAM (on cartridge)
@@ -30,6 +31,11 @@ uint8_t ReadByte(uint16_t address) {
 
     switch (address >> 12) {
         case 0x0:
+            if (address < 0x100 && mbc.bootromEnabled) {
+                return bootrom[address];
+            } else {
+                return ReadRom(address);
+            }
         case 0x1:
         case 0x2:
         case 0x3:

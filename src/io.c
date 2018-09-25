@@ -89,6 +89,11 @@ void WriteIO(uint16_t address, uint8_t data) {
             gpu.obpPalette[1][2] = (data & 0xC0) >> 6;
             break;
 
+        case IO_BOOT:
+            mbc.bootromEnabled = 0;
+            io[IO_BOOT] = data & 1;
+            break;
+
         default: io[address] = data;
     }
 }
