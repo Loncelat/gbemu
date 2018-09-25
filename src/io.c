@@ -21,7 +21,31 @@ uint8_t ReadIO(uint16_t address) {
             } else {
                 return gpu.scanline;
             }
-        default: return io[address];
+
+        case IO_SB:
+        case IO_SC:
+        case IO_TIMA:
+        case IO_TMA:
+        case IO_IF:
+        case IO_LCDC:
+        case IO_SCY:
+        case IO_SCX:
+        case IO_LYC:
+        case IO_DMA:
+        case IO_BGP:
+        case IO_OBP0:
+        case IO_OBP1:
+        case IO_WY:
+        case IO_WX:
+        case IO_BOOT:
+            return io[address];
+
+        default: 
+            if ( (address >= IO_NR10 && address <= IO_NR52)
+                || (address >= 0x30 && address <= 0x3F) ) {
+                    return io[address];
+                }
+            return 0xFF;
     }
 }
 
@@ -29,6 +53,9 @@ void WriteIO(uint16_t address, uint8_t data) {
     switch(address) {
         case IO_P1: // JOYPAD
             io[IO_P1] = (data & (3 << 4)) | (io[IO_P1] & ~(3 << 4));
+            break;
+        case IO_SC:
+            io[IO_SC] = data | 0x7E;
             break;
         case IO_DIV: timer.div = 0x0000; *timer.tima = 0x00; break;
         case IO_TAC: WriteTimerControl(data); io[IO_TAC] = 0xF8 | (data & 0x3); break;
@@ -101,6 +128,33 @@ void WriteIO(uint16_t address, uint8_t data) {
 void ResetIO(void) {
 
     memset(io, 0xFF, sizeof(io));
+
+    if (!mbc.useBootRom) {
+
+        io[IO_NR11] = 0xBF;
+        io[IO_NR12] = 0xF3;
+        io[IO_NR50] = 0x77;
+        io[IO_NR51] = 0xF3;
+        io[IO_NR52] = 0xF1;
+
+        io[IO_LCDC] = 0x91;
+        io[IO_STAT] = 0x85;
+        io[IO_LY]   = 0x99;
+        WriteIO(IO_BGP, 0xFC);
+
+    } else {
+
+        io[IO_NR11] = 0x3F;
+        io[IO_NR50] = 0x00;
+        io[IO_NR51] = 0x00;
+        io[IO_NR52] = 0x70;
+
+        io[IO_LCDC] = 0x00;
+        io[IO_STAT] = 0x80;
+        io[IO_LY] = 0x00;
+        WriteIO(IO_BGP, 0x00);
+
+    }
     
     io[IO_P1] = 0xCF;
     
@@ -112,8 +166,7 @@ void ResetIO(void) {
     io[IO_IF]   = 0xE1;
 
     io[IO_NR10] = 0x80;
-    io[IO_NR11] = 0xBF;
-    io[IO_NR12] = 0xF3;
+
     io[IO_NR14] = 0xBF;
     io[IO_NR21] = 0x3F;
     io[IO_NR22] = 0x00;
@@ -125,20 +178,12 @@ void ResetIO(void) {
     io[IO_NR42] = 0x00;
     io[IO_NR43] = 0x00;
     io[IO_NR44] = 0xBF;
-    io[IO_NR50] = 0x77;
-    io[IO_NR51] = 0xF3;
-    io[IO_NR52] = 0xF1;
 
-    io[IO_LCDC] = 0x91;
-    io[IO_STAT] = 0x85;
-    io[IO_LY]   = 0x99;
-    io[IO_LYC]  = 0x00;
     io[IO_SCY]  = 0x00;
     io[IO_SCX]  = 0x00;
+    io[IO_LYC]  = 0x00;
     io[IO_WY]   = 0x00;
     io[IO_WX]   = 0x00;
-    WriteIO(IO_BGP, 0xFC);
     WriteIO(IO_OBP0, 0xFF);
     WriteIO(IO_OBP1, 0xFF);
-
 }

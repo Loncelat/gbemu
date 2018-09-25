@@ -9,6 +9,8 @@ struct cpu cpu = {
 
 void ResetCPU(void) {
 
+    ResetIO();
+
     if (mbc.useBootRom) {
         registers.af = 0;
         registers.bc = 0;
@@ -17,16 +19,14 @@ void ResetCPU(void) {
         registers.sp = 0;
         registers.pc = 0;
 
-        timer.div = 0;
-        timer.enabled = 0;
+        timer.div       = 0;
+        timer.enabled   = 0;
         timer.frequency = 0;
 
-        gpu.scanline = 0;
-        gpu.cycles = 0;
-        gpu.mode = HBLANK;
+        gpu.scanline    = 0;
+        gpu.cycles      = 0;
+        gpu.mode        = HBLANK;
         gpu.coincidence = 1;
-        io[IO_P1] = 0xCF;
-        io[0x26] = 0x70;
 
     } else {
         registers.af = 0x01B0;
@@ -39,17 +39,15 @@ void ResetCPU(void) {
         cpu.halted  = NOT_HALTED;
         cpu.bugged  = 0;
         cpu.stopped = 0;
-
-        ResetIO();
         
         timer.div       = 0xABCC;
         timer.enabled   = 0;
         timer.frequency = 0;
 
         gpu.scanline    = 153;
-        gpu.cycles      = 404;
+        gpu.cycles      = 436;
         gpu.mode        = VBLANK;
-        gpu.coincidence = 0x1;
+        gpu.coincidence = 1;
     }
 
     mbc.romBank = 1;
@@ -72,14 +70,14 @@ void PrintRegisters(void) {
     printf("PC: %04X\n", registers.pc);
     printf("LCDC: %02X\n", *gpu.control);
     printf("STAT: %02X\n", ReadByte(0xFF41));
-    printf("DIV: %02X\n", timer.div);
+    printf("DIV: %04X\n", timer.div);
     printf("LY: %02X\n", ReadIO(0x44));
     printf("SCN: %02X\n", gpu.scanline);
     printf("CYCLES: %03i\n", gpu.cycles);
     printf("MODE: %02X\n", gpu.mode);
-    // printf("TIMA: %02X\n", *timer.tima);
-    // printf("TMA: %02X\n", *timer.tma);
-    // printf("TAC: %02X\n", ReadByte(0xFF07));
+    printf("TIMA: %02X\n", *timer.tima);
+    printf("TMA: %02X\n", *timer.tma);
+    printf("TAC: %02X\n", ReadByte(0xFF07));
     printf("ROM: %02X\n\n", mbc.romBank);
 }
 
@@ -101,11 +99,11 @@ void CPUCycle(void) {
     }
 
     #ifdef DEBUG
-    if (registers.pc == 0x28) {
+    if (registers.pc == 0x100) {
         PrintRegisters();
-        printf("104: %x\n", rom[0x104]);
         getchar();
     }
+ 
     #endif
 
     if (cpu.bugged) {

@@ -14,7 +14,7 @@ void WriteTimerControl(uint8_t data) {
 void UpdateTimer(uint8_t cycles) {
     
     timer.div += cycles;
-    timer.cycles += cycles;
+    timer.cycles += timer.enabled ? cycles : 0;
     
     while (timer.enabled && timer.cycles >= timerClocksCount[timer.frequency]) {
         
