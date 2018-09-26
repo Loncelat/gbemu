@@ -67,7 +67,7 @@ int SetupVideo(void) {
         LCD_WIDTH,
         LCD_HEIGHT);
 
-    SDL_ShowCursor(SDL_DISABLE);
+    // SDL_ShowCursor(SDL_DISABLE);
     SDL_SetRenderDrawColor(LCDRenderer, 232, 232, 232, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(LCDRenderer);
     SDL_RenderPresent(LCDRenderer);
