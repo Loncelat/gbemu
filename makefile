@@ -10,7 +10,7 @@ INCL   := -I$(INCLDIR) -ISDL2/include
 MAIN   := gbemu
 
 # Define flags
-$(MAIN): CFLAGS := -Wall -Wextra -O2 -s -flto -pedantic -std=c11
+$(MAIN): CFLAGS := -Wall -Wextra -O2 -s -flto -pedantic -std=c11 -ffast-math
 debug:   CFLAGS := -Wall -Wextra -DDEBUG
 
 LFLAGS := -Wl,--no-warn-search-mismatch
