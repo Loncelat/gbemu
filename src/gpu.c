@@ -212,7 +212,6 @@ void RenderTiles(void) {
 
         uint8_t xPos = i + *gpu.scx;
 
-        // Possible underflow when *gpu.wx < 7.
         if (usingWindow && i >= (*gpu.wx - 7)) {
             xPos = i - (*gpu.wx - 7);
         }
