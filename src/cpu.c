@@ -57,7 +57,7 @@ void ResetCPU(void) {
     keys.Up = keys.Down = keys.Left = keys.Right = 1;
 
     // Zet IE naar 0x00.
-    WriteByte(0xFFFF, 0x00);
+    INTERRUPT_ENABLE = 0x00;
 
 }
 

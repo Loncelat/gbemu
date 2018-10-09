@@ -8,18 +8,18 @@ uint8_t CheckAndHandleInterrupts(void) {
 
     // Controleer of er een interrupt is.
     if (!(FLAGS & 0x1F)) {
-        return 0;
+        return NO_INTR_DISPATCH;
     }
 
     cpu.halted = NOT_HALTED;
     
     if (!IME) {
         t_cycles += 4;
-        return 0;
+        return NO_INTR_DISPATCH;
     }
 
     // Clear de interrupt flag.
-    io[0x0F] = 0xE0;
+    INTERRUPT_FLAGS = 0xE0;
     WriteStack(registers.pc);
     IME = 0;
     
@@ -40,5 +40,5 @@ uint8_t CheckAndHandleInterrupts(void) {
         registers.pc = 0x0060;
     }
 
-    return 1;
+    return INTR_DISPATCH;
 }

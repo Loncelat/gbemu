@@ -7,15 +7,15 @@
 #include "cpu.h"
 #include "gpu.h"
 
-#define INTERRUPT_FLAGS ReadByte(0xFF0F)
-#define INTERRUPT_ENABLE ReadByte(0xFFFF)
+#define INTERRUPT_FLAGS io[IO_IF]
+#define INTERRUPT_ENABLE hram[0x7F]
 
 #define REQ_INTERRUPT(interrupt) do { \
-    WriteByte(IF_LOCATION,  INTERRUPT_FLAGS | (interrupt)); \
+    INTERRUPT_FLAGS = INTERRUPT_FLAGS | (interrupt); \
 } while (0)
 
-#define IF_LOCATION 0xFF0F
-#define IE_LOCATION 0xFFFF
+#define NO_INTR_DISPATCH (0)
+#define INTR_DISPATCH (1)
 
 #define JOYPAD_INTERRUPT (1 << 4)
 #define SERIAL_INTERRUPT (1 << 3)
