@@ -19,9 +19,11 @@ uint64_t vsyncStartTime;
 uint8_t waitForVsync = 1;
 uint64_t frequency;
 
-// uint32_t frames = 0;
-// uint32_t renderCount = 0;
-// char name[32];
+#ifdef BENCH
+uint32_t frames = 0;
+uint32_t renderCount = 0;
+char name[32];
+#endif
 
 // LCD van 160px bij 144px.
 Colour_t pixelBuffer[144][160];
@@ -330,7 +332,9 @@ void DrawPixelBuffer(void) {
 
     gpu.skipNextFrame = 0;
     
-    //frames += 1;
+    #ifdef BENCH
+    frames += 1;
+    #endif
 
     if (waitForVsync) {
 
@@ -343,13 +347,15 @@ void DrawPixelBuffer(void) {
         SDL_RenderCopy(LCDRenderer, LCD, NULL, NULL);
         SDL_RenderPresent(LCDRenderer);
 
-        // renderCount++;
-        // if (renderCount == 60) {
-        //     snprintf(name, sizeof(name), "%d", frames);
-        //     SDL_SetWindowTitle(window, name);
-        //     frames = 0;
-        //     renderCount = 0;
-        // }
+        #ifdef BENCH
+        renderCount++;
+        if (renderCount == 60) {
+            snprintf(name, sizeof(name), "%d", frames);
+            SDL_SetWindowTitle(window, name);
+            frames = 0;
+            renderCount = 0;
+        }
+        #endif
         
     } else if (!VSYNC_SHOULD_WAIT) {
 
@@ -358,13 +364,15 @@ void DrawPixelBuffer(void) {
         SDL_RenderCopy(LCDRenderer, LCD, NULL, NULL);
         SDL_RenderPresent(LCDRenderer);
 
-        // renderCount++;        
-        // if (renderCount == 60) {
-        //     snprintf(name, sizeof(name), "%d", frames);
-        //     SDL_SetWindowTitle(window, name);
-        //     frames = 0;
-        //     renderCount = 0;
-        // }
+        #ifdef BENCH
+        renderCount++;
+        if (renderCount == 60) {
+            snprintf(name, sizeof(name), "%d", frames);
+            SDL_SetWindowTitle(window, name);
+            frames = 0;
+            renderCount = 0;
+        }
+        #endif
 
     } else {
         gpu.skipNextFrame = 1;
