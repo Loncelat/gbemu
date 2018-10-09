@@ -19,8 +19,8 @@
 #define SEARCH_OAM_RAM 0x02
 #define DATA_TO_LCD    0x03
 
-#define VSYNC_SHOULD_WAIT ((SDL_GetPerformanceCounter() - vsyncStartTime) * 1000.0 / SDL_GetPerformanceFrequency() < FRAME_FREQUENCY)
-#define VSYNC_WAIT (SDL_Delay((FRAME_FREQUENCY) - (SDL_GetPerformanceCounter() - vsyncStartTime) * 1000.0 / SDL_GetPerformanceFrequency()))
+#define VSYNC_SHOULD_WAIT ((SDL_GetPerformanceCounter() - vsyncStartTime) * 1000.0 / frequency < FRAME_FREQUENCY)
+#define VSYNC_WAIT (SDL_Delay((FRAME_FREQUENCY) - (SDL_GetPerformanceCounter() - vsyncStartTime) * 1000.0 / frequency))
 
 #define COINCIDENCE_IRQ (*gpu.stat & (1 << 6))
 #define OAM_SEARCH_IRQ   (*gpu.stat & (1 << 5))

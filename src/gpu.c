@@ -17,6 +17,11 @@ SDL_Event event;
 
 uint64_t vsyncStartTime;
 uint8_t waitForVsync = 1;
+uint64_t frequency;
+
+// uint32_t frames = 0;
+// uint32_t renderCount = 0;
+// char name[32];
 
 // LCD van 160px bij 144px.
 Colour_t pixelBuffer[144][160];
@@ -39,7 +44,6 @@ struct gpu gpu = {
 };
 
 int SetupVideo(void) {
-
     window = SDL_CreateWindow(
         "gbemu",
         SDL_WINDOWPOS_UNDEFINED,
@@ -71,6 +75,8 @@ int SetupVideo(void) {
     SDL_SetRenderDrawColor(LCDRenderer, 232, 232, 232, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(LCDRenderer);
     SDL_RenderPresent(LCDRenderer);
+
+    frequency = SDL_GetPerformanceFrequency();
 
     return 0;
 }
@@ -323,6 +329,8 @@ void DrawPixelBuffer(void) {
     }
 
     gpu.skipNextFrame = 0;
+    
+    //frames += 1;
 
     if (waitForVsync) {
 
@@ -334,6 +342,14 @@ void DrawPixelBuffer(void) {
         SDL_UpdateTexture(LCD, NULL, pixelBuffer, LCD_WIDTH * sizeof(Colour_t));
         SDL_RenderCopy(LCDRenderer, LCD, NULL, NULL);
         SDL_RenderPresent(LCDRenderer);
+
+        // renderCount++;
+        // if (renderCount == 60) {
+        //     snprintf(name, sizeof(name), "%d", frames);
+        //     SDL_SetWindowTitle(window, name);
+        //     frames = 0;
+        //     renderCount = 0;
+        // }
         
     } else if (!VSYNC_SHOULD_WAIT) {
 
@@ -341,6 +357,14 @@ void DrawPixelBuffer(void) {
         SDL_UpdateTexture(LCD, NULL, pixelBuffer, LCD_WIDTH * sizeof(Colour_t));
         SDL_RenderCopy(LCDRenderer, LCD, NULL, NULL);
         SDL_RenderPresent(LCDRenderer);
+
+        // renderCount++;        
+        // if (renderCount == 60) {
+        //     snprintf(name, sizeof(name), "%d", frames);
+        //     SDL_SetWindowTitle(window, name);
+        //     frames = 0;
+        //     renderCount = 0;
+        // }
 
     } else {
         gpu.skipNextFrame = 1;
