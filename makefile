@@ -10,8 +10,11 @@ INCL   := -I$(INCLDIR) -ISDL2/include
 MAIN   := gbemu
 
 # Define flags
-$(MAIN): CFLAGS := -Wall -Wextra -O2 -s -flto -pedantic -std=c11 -ffast-math
-debug:   CFLAGS := -Wall -Wextra -DDEBUG
+override CFLAGS := -Wall -Wextra $(CFLAGS)
+
+$(MAIN):     CFLAGS += -O2 -s -flto -pedantic -std=c11 -ffast-math
+disassemble: CFLAGS += -O2 -g -flto -pedantic -std=c11 -ffast-math
+debug:       CFLAGS += -g -DDEBUG
 
 LFLAGS := -Wl,--no-warn-search-mismatch
 LIBS   := -lmingw32 -lSDL2main -lSDL2
@@ -28,11 +31,14 @@ RES := $(wildcard res/*.res)
 
 endif
 
-$(MAIN): $(OBJ)
-	$(CC) $(CFLAGS) $(LFLAGS) $(INCL) $(LIB) $(RES) -o $(PROGDIR)/$(MAIN) $^ $(LIBS)
-
 $(OBJDIR)/%.o: $(SRCDIR)/%.c $(DEP)
 	$(CC) $(CFLAGS) $(INCL) $(LIB) -c $< -o $@
+
+$(MAIN): $(OBJ)
+	$(CC) $(CFLAGS) $(LFLAGS) $(INCL) $(LIB) $(RES) -o $(PROGDIR)/$(MAIN) $^ $(LIBS)
+    
+disassemble: $(OBJ)
+	$(CC) $(CFLAGS) $(LFLAGS) $(INCL) $(LIB) $(RES) -o $(PROGDIR)/$(MAIN) $^ $(LIBS)
 
 debug: $(OBJ)
 	$(CC) $(CFLAGS) $(LFLAGS) $(INCL) $(LIB) $(RES) -o $(PROGDIR)/$(MAIN) $^ $(LIBS)
