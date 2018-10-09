@@ -21,7 +21,7 @@ uint64_t frequency;
 
 #ifdef BENCH
 uint32_t frames = 0;
-uint32_t renderCount = 0;
+uint8_t renderCount = 0;
 char name[32];
 #endif
 
@@ -206,7 +206,7 @@ void RenderTiles(void) {
         y = gpu.scanline + *gpu.scy;
     }
 
-    TileMapOffset += ((uint8_t) (y / 8)) * 32;
+    TileMapOffset += (y / 8) * 32;
 
     for (uint8_t i = 0; i < 160;) {
 
@@ -335,45 +335,29 @@ void DrawPixelBuffer(void) {
     frames += 1;
     #endif
 
-    if (waitForVsync) {
+    if (VSYNC_SHOULD_WAIT) {
 
-        if (VSYNC_SHOULD_WAIT) {
+        // Pause if framerate is capped.
+        if (waitForVsync) {
             VSYNC_WAIT;
+        } else {
+            gpu.skipNextFrame = 1;
+            return;
         }
-
-        vsyncStartTime = SDL_GetPerformanceCounter();
-        SDL_UpdateTexture(LCD, NULL, pixelBuffer, LCD_WIDTH * sizeof(Colour_t));
-        SDL_RenderCopy(LCDRenderer, LCD, NULL, NULL);
-        SDL_RenderPresent(LCDRenderer);
-
-        #ifdef BENCH
-        renderCount++;
-        if (renderCount == 60) {
-            snprintf(name, sizeof(name), "%d", frames);
-            SDL_SetWindowTitle(window, name);
-            frames = 0;
-            renderCount = 0;
-        }
-        #endif
-        
-    } else if (!VSYNC_SHOULD_WAIT) {
-
-        vsyncStartTime = SDL_GetPerformanceCounter();
-        SDL_UpdateTexture(LCD, NULL, pixelBuffer, LCD_WIDTH * sizeof(Colour_t));
-        SDL_RenderCopy(LCDRenderer, LCD, NULL, NULL);
-        SDL_RenderPresent(LCDRenderer);
-
-        #ifdef BENCH
-        renderCount++;
-        if (renderCount == 60) {
-            snprintf(name, sizeof(name), "%d", frames);
-            SDL_SetWindowTitle(window, name);
-            frames = 0;
-            renderCount = 0;
-        }
-        #endif
-
-    } else {
-        gpu.skipNextFrame = 1;
     }
+
+    vsyncStartTime = SDL_GetPerformanceCounter();
+    SDL_UpdateTexture(LCD, NULL, pixelBuffer, LCD_WIDTH * sizeof(Colour_t));
+    SDL_RenderCopy(LCDRenderer, LCD, NULL, NULL);
+    SDL_RenderPresent(LCDRenderer);
+
+    #ifdef BENCH
+    renderCount++;
+    if (renderCount == 60) {
+        snprintf(name, sizeof(name), "%d", frames);
+        SDL_SetWindowTitle(window, name);
+        frames = 0;
+        renderCount = 0;
+    }
+    #endif
 }
