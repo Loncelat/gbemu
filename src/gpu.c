@@ -269,16 +269,16 @@ void RenderSprites(void) {
         uint8_t palNo = SPRITE_PALETTE >> 4;
         uint8_t priority = SPRITE_PRIORITY;
 
+        if (gpu.scanline < sy || gpu.scanline >= sy + verticalsize) {
+            continue;
+        }
+
         /*
         When using 8x16 sprites, the least significant bit of
         the sprite's tile number is ignored.
         */
         if (use8x16) {
             sprite.tile &= 0xFE;
-        }
-
-        if (gpu.scanline < sy || gpu.scanline >= sy + verticalsize) {
-            continue;
         }
 
         int16_t line = gpu.scanline - sy;
