@@ -74,7 +74,7 @@ uint8_t LoadRom(char *file) {
 	
 	rewind(f);
 
-    if (!fread(rom, 1, fileLength, f)) { fclose(f); return 1;}
+    if (!fread(rom, 1, mbc.rombanks * 0x4000, f)) { fclose(f); return 1;}
     fclose(f); return 0;
 }
 
