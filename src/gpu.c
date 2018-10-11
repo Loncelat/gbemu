@@ -25,17 +25,26 @@ uint8_t renderCount = 0;
 char name[32];
 #endif
 
-// LCD van 160px bij 144px.
 Colour_t pixelBuffer[144][160];
 uint8_t scanLineRow[160];
 
-// Grijstinten-palette.
-const Colour_t palette[4] = {
-    {232, 232, 232},
-    {160, 160, 160},
-    {88,  88,  88},
-    {16,  16,  16},
+Colour_t paletteData[PALETTE_COUNT][4] = {
+    {
+        {232, 232, 232},
+        {160, 160, 160},
+        {88,  88,  88},
+        {16,  16,  16},
+    },
+    {
+        {155, 188, 15},
+        {139, 172, 15},
+        {48, 98, 48},
+        {15, 56, 15},
+    },
 };
+
+Colour_t (*palette)[4] = &paletteData[0];
+uint8_t currentPalette = 0;
 
 struct gpu gpu = { 
     &io[IO_LCDC], &io[IO_STAT], &io[IO_SCY], &io[IO_SCX],
@@ -81,6 +90,11 @@ int SetupVideo(void) {
     frequency = SDL_GetPerformanceFrequency();
 
     return 0;
+}
+
+void TogglePalette(void) {
+    currentPalette = (currentPalette + 1) % PALETTE_COUNT;
+    palette = &paletteData[currentPalette];
 }
 
 void ResizeWindow(int8_t factor) {
@@ -238,7 +252,7 @@ void RenderTiles(void) {
                         ((data1 & mask) >> (7 - tilePos));
 
             scanLineRow[i] = colourID;
-            pixelBuffer[gpu.scanline][i] = palette[gpu.bgPalette[colourID]];
+            pixelBuffer[gpu.scanline][i] = (*palette)[gpu.bgPalette[colourID]];
             ++i;
             ++tilePos;
 
@@ -310,7 +324,7 @@ void RenderSprites(void) {
                                ((data2 & mask) ? 2 : 0);
 
             if (colourID) {
-                pixelBuffer[gpu.scanline][x] = palette[
+                pixelBuffer[gpu.scanline][x] = (*palette)[
                     gpu.obpPalette[palNo][colourID - 1]
                 ];
             }

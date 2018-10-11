@@ -17,6 +17,7 @@ void HandleInput(SDL_Event *event) {
             case SDLK_RIGHT:  keys.Right  = 0; break;
 
             case SDLK_BACKSPACE: PrintRegisters(); break;
+            case SDLK_ESCAPE: TogglePalette();     break;
             case SDLK_TAB: waitForVsync = 0;       break;
 
             case SDLK_PAGEUP: ResizeWindow(1); break;

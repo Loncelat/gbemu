@@ -14,6 +14,8 @@
 #define FRAMES_PER_SECOND 60
 #define FRAME_FREQUENCY ((double) 1000 / FRAMES_PER_SECOND)
 
+#define PALETTE_COUNT (2)
+
 #define HBLANK         0x00
 #define VBLANK         0x01
 #define SEARCH_OAM_RAM 0x02
@@ -99,6 +101,7 @@ typedef struct {
 
 int SetupVideo(void);
 void ResizeWindow(int8_t factor);
+void TogglePalette(void);
 void gpu_quit(void);
 
 void gpuCycle(uint8_t cycles);
