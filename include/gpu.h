@@ -14,7 +14,7 @@
 #define FRAMES_PER_SECOND 60
 #define FRAME_FREQUENCY ((double) 1000 / FRAMES_PER_SECOND)
 
-#define PALETTE_COUNT (2)
+#define PALETTE_COUNT (sizeof(paletteData) / sizeof(paletteData[0]))
 
 #define HBLANK         0x00
 #define VBLANK         0x01

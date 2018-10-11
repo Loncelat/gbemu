@@ -28,7 +28,7 @@ char name[32];
 Colour_t pixelBuffer[144][160];
 uint8_t scanLineRow[160];
 
-Colour_t paletteData[PALETTE_COUNT][4] = {
+Colour_t paletteData[2][4] = {
     {
         {232, 232, 232},
         {160, 160, 160},
