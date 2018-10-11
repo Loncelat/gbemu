@@ -6,9 +6,9 @@
 */
 
 uint8_t bootrom[0x100];
-uint8_t *rom;        // 0000-7FFF ROM | cartridge data
+uint8_t *rom = NULL;  // 0000-7FFF ROM | cartridge data
 uint8_t vram[0x2000]; // 8000-9FFF Video RAM
-uint8_t *sram;        // A000-BFFF External RAM (on cartridge)
+uint8_t *sram = NULL; // A000-BFFF External RAM (on cartridge)
 uint8_t wram[0x2000]; // C000-DFFF (Working RAM) ( E000-FDFF (Shadow Working RAM) )
 uint8_t oam[0x00A0];  // FE00-FE9F Sprite information
 uint8_t io[0x0080];   // FF00-FF7F MMIO

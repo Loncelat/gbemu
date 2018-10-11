@@ -140,6 +140,10 @@ void InitMBCType(uint8_t cartridgeType) {
 
 void InitMemory(char *romname, char *romPath) {
 
+    // Free in case another rom is somehow loaded.
+    free(rom);
+    free(sram);
+
     // Allocate memory for ROM and RAM.
     rom = malloc(mbc.rombanks * 0x4000);
     sram = malloc(mbc.ramsize);
