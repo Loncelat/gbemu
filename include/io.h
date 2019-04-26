@@ -2,6 +2,7 @@
 
 #include <stdint.h>
 #include "memory.h"
+#include "SDL2/SDL.h"
 
 enum IORegisters {
     IO_P1 = 0x00,

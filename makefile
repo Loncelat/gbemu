@@ -13,11 +13,12 @@ MAIN   := gbemu
 override CFLAGS := -Wall -Wextra $(CFLAGS)
 
 $(MAIN):     CFLAGS += -O2 -s -flto -pedantic -std=c11 -ffast-math
+bench:       CFLAGS += -O2 -s -flto -pedantic -std=c11 -ffast-math -DBENCH
 disassemble: CFLAGS += -O2 -g -flto -pedantic -std=c11 -ffast-math
 debug:       CFLAGS += -g -DDEBUG
 
 LFLAGS := -Wl,--no-warn-search-mismatch
-LIBS   := -lmingw32 -lSDL2main -lSDL2
+LIBS   := -lSDL2main -lSDL2
 
 SRC := $(wildcard $(SRCDIR)/*.c)
 OBJ := $(patsubst %, $(OBJDIR)/%, $(notdir $(SRC:%.c=%.o)))
@@ -27,6 +28,8 @@ DEP := $(wildcard $(INCLDIR)/*.h)
 ifeq ($(OS), Windows_NT)
 
 $(MAIN): LFLAGS += -Wl,-subsystem,windows
+bench: LFLAGS += -Wl,-subsystem,windows
+LIBS := -lmingw32 $(LIBS)
 RES := $(wildcard res/*.res)
 
 endif
@@ -36,7 +39,10 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.c $(DEP)
 
 $(MAIN): $(OBJ)
 	$(CC) $(CFLAGS) $(LFLAGS) $(INCL) $(LIB) $(RES) -o $(PROGDIR)/$(MAIN) $^ $(LIBS)
-    
+
+bench: $(OBJ)
+	$(CC) $(CFLAGS) $(LFLAGS) $(INCL) $(LIB) $(RES) -o $(PROGDIR)/$(MAIN) $^ $(LIBS)
+
 disassemble: $(OBJ)
 	$(CC) $(CFLAGS) $(LFLAGS) $(INCL) $(LIB) $(RES) -o $(PROGDIR)/$(MAIN) $^ $(LIBS)
 

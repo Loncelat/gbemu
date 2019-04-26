@@ -305,7 +305,6 @@ void RenderSprites(void) {
 
         uint8_t data1 = vram[sprite.tile * 16 + line];
         uint8_t data2 = vram[sprite.tile * 16 + line + 1];
-
         for (uint8_t tilex = 0; tilex < 8; tilex++) {
 
             int16_t x = sx + tilex;
